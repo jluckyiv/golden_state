@@ -2,24 +2,26 @@ defmodule BallotListTest do
   use ExUnit.Case
 
   setup_all do
+    team1 = Team.new(name: "Team 1")
+
     ballots = [
       Ballot.new(
         defense_motion_score: 8,
         defense_closing_score: 9,
-        defense: "Team 1",
-        defense_score: 101,
+        defense: team1,
+        defense_total_score: 101,
         prosecution: "Team 2",
-        prosecution_score: 100,
+        prosecution_total_score: 100,
         round_number: 1,
         scorer: "Scorer 1"
       ),
       Ballot.new(
         defense_motion_score: 8,
         defense_closing_score: 9,
-        defense: "Team 1",
-        defense_score: 102,
+        defense: team1,
+        defense_total_score: 102,
         prosecution: "Team 2",
-        prosecution_score: 100,
+        prosecution_total_score: 100,
         round_number: 1,
         scorer: "Scorer 2"
       ),
@@ -27,9 +29,9 @@ defmodule BallotListTest do
         defense_motion_score: 8,
         defense_closing_score: 9,
         defense: "Team 3",
-        defense_score: 100,
-        prosecution: "Team 1",
-        prosecution_score: 100,
+        defense_total_score: 100,
+        prosecution: team1,
+        prosecution_total_score: 100,
         round_number: 2,
         scorer: "Scorer 3"
       ),
@@ -37,9 +39,9 @@ defmodule BallotListTest do
         defense_motion_score: 8,
         defense_closing_score: 9,
         defense: "Team 3",
-        defense_score: 101,
-        prosecution: "Team 1",
-        prosecution_score: 100,
+        defense_total_score: 101,
+        prosecution: team1,
+        prosecution_total_score: 100,
         round_number: 2,
         scorer: "Scorer 4"
       ),
@@ -47,9 +49,9 @@ defmodule BallotListTest do
         defense_motion_score: 8,
         defense_closing_score: 9,
         defense: "Team 4",
-        defense_score: 101,
-        prosecution: "Team 1",
-        prosecution_score: 100,
+        defense_total_score: 101,
+        prosecution: team1,
+        prosecution_total_score: 100,
         round_number: 3,
         scorer: "Scorer 5"
       ),
@@ -57,9 +59,9 @@ defmodule BallotListTest do
         defense_motion_score: 8,
         defense_closing_score: 9,
         defense: "Team 4",
-        defense_score: 100,
-        prosecution: "Team 1",
-        prosecution_score: 101,
+        defense_total_score: 100,
+        prosecution: team1,
+        prosecution_total_score: 101,
         round_number: 3,
         scorer: "Scorer 6"
       ),
@@ -67,9 +69,9 @@ defmodule BallotListTest do
         defense_motion_score: 8,
         defense_closing_score: 9,
         defense: "Team 5",
-        defense_score: 107,
+        defense_total_score: 107,
         prosecution: "Team 3",
-        prosecution_score: 100,
+        prosecution_total_score: 100,
         round_number: 4,
         scorer: "Scorer 7"
       ),
@@ -77,9 +79,9 @@ defmodule BallotListTest do
         defense_motion_score: 8,
         defense_closing_score: 9,
         defense: "Team 5",
-        defense_score: 105,
+        defense_total_score: 105,
         prosecution: "Team 3",
-        prosecution_score: 100,
+        prosecution_total_score: 100,
         round_number: 4,
         scorer: "Scorer 8"
       ),
@@ -87,9 +89,9 @@ defmodule BallotListTest do
         defense_motion_score: 8,
         defense_closing_score: 9,
         defense: "Team 7",
-        defense_score: 105,
+        defense_total_score: 105,
         prosecution: "Team 8",
-        prosecution_score: 100,
+        prosecution_total_score: 100,
         round_number: 5,
         scorer: "Scorer 8"
       ),
@@ -97,9 +99,9 @@ defmodule BallotListTest do
         defense_motion_score: 8,
         defense_closing_score: 9,
         defense: "Team 7",
-        defense_score: 105,
+        defense_total_score: 105,
         prosecution: "Team 8",
-        prosecution_score: 100,
+        prosecution_total_score: 100,
         round_number: 5,
         scorer: "Scorer 8"
       ),
@@ -107,9 +109,9 @@ defmodule BallotListTest do
         defense_motion_score: 8,
         defense_closing_score: 9,
         defense: "Team 9",
-        defense_score: 105,
+        defense_total_score: 105,
         prosecution: "Team 6",
-        prosecution_score: 100,
+        prosecution_total_score: 100,
         round_number: 5,
         scorer: "Scorer 8"
       ),
@@ -117,15 +119,15 @@ defmodule BallotListTest do
         defense_motion_score: 8,
         defense_closing_score: 9,
         defense: "Team 9",
-        defense_score: 105,
+        defense_total_score: 105,
         prosecution: "Team 6",
-        prosecution_score: 100,
+        prosecution_total_score: 100,
         round_number: 5,
         scorer: "Scorer 8"
       )
     ]
 
-    {:ok, ballots: ballots}
+    {:ok, ballots: ballots, team1: team1}
   end
 
   test "closing score", context do
@@ -141,7 +143,8 @@ defmodule BallotListTest do
 
   test "total ballots won", context do
     ballots = context[:ballots]
-    assert BallotList.ballots_won(ballots, "Team 1") == 3.5
+    team1 = context[:team1]
+    assert BallotList.ballots_won(ballots, team1) == 3.5
     assert BallotList.ballots_won(ballots, "Team 2") == 0.0
     assert BallotList.ballots_won(ballots, "Team 3") == 1.5
     assert BallotList.ballots_won(ballots, "Team 4") == 1.0
@@ -150,7 +153,8 @@ defmodule BallotListTest do
 
   test "total point differential", context do
     ballots = context[:ballots]
-    assert BallotList.point_differential(ballots, "Team 1") == 2
+    team1 = context[:team1]
+    assert BallotList.point_differential(ballots, team1) == 2
     assert BallotList.point_differential(ballots, "Team 2") == -3
     assert BallotList.point_differential(ballots, "Team 3") == -11
     assert BallotList.point_differential(ballots, "Team 4") == 0
@@ -159,16 +163,18 @@ defmodule BallotListTest do
 
   test "opponents", context do
     ballots = context[:ballots]
-    assert BallotList.opponents(ballots, "Team 1") == ["Team 2", "Team 3", "Team 4"]
-    assert BallotList.opponents(ballots, "Team 2") == ["Team 1"]
-    assert BallotList.opponents(ballots, "Team 3") == ["Team 1", "Team 5"]
-    assert BallotList.opponents(ballots, "Team 4") == ["Team 1"]
+    team1 = context[:team1]
+    assert BallotList.opponents(ballots, team1) == ["Team 2", "Team 3", "Team 4"]
+    assert BallotList.opponents(ballots, "Team 2") == [team1]
+    assert BallotList.opponents(ballots, "Team 3") == [team1, "Team 5"]
+    assert BallotList.opponents(ballots, "Team 4") == [team1]
     assert BallotList.opponents(ballots, "Team 5") == ["Team 3"]
   end
 
   test "combined strength", context do
     ballots = context[:ballots]
-    assert BallotList.combined_strength(ballots, "Team 1") == 2.5
+    team1 = context[:team1]
+    assert BallotList.combined_strength(ballots, team1) == 2.5
     assert BallotList.combined_strength(ballots, "Team 2") == 3.5
     assert BallotList.combined_strength(ballots, "Team 3") == 5.5
     assert BallotList.combined_strength(ballots, "Team 4") == 3.5
@@ -177,28 +183,29 @@ defmodule BallotListTest do
 
   test "filter", context do
     ballots = context[:ballots]
-    team1_round1 = BallotList.filter(ballots, team: "Team 1", round_number: 1)
+    team1 = context[:team1]
+    team1_round1 = BallotList.filter(ballots, team: team1, round_number: 1)
     assert Enum.count(team1_round1) == 2
 
-    team1_round4 = BallotList.filter(ballots, team: "Team 1", round_number: 4)
+    team1_round4 = BallotList.filter(ballots, team: team1, round_number: 4)
     assert Enum.empty?(team1_round4)
 
-    team1_up_to_round2 = BallotList.filter(ballots, team: "Team 1", up_to_round: 2)
+    team1_up_to_round2 = BallotList.filter(ballots, team: team1, up_to_round: 2)
     assert Enum.count(team1_up_to_round2) == 4
 
-    team1_up_to_round3 = BallotList.filter(ballots, team: "Team 1", up_to_round: 3)
+    team1_up_to_round3 = BallotList.filter(ballots, team: team1, up_to_round: 3)
     assert Enum.count(team1_up_to_round3) == 6
 
-    team1_up_to_round4 = BallotList.filter(ballots, team: "Team 1", up_to_round: 4)
+    team1_up_to_round4 = BallotList.filter(ballots, team: team1, up_to_round: 4)
     assert Enum.count(team1_up_to_round4) == 6
 
     team2_v_team1_up_to_round4 =
-      BallotList.filter(ballots, defense: "Team 1", prosecution: "Team 2", up_to_round: 4)
+      BallotList.filter(ballots, defense: team1, prosecution: "Team 2", up_to_round: 4)
 
     assert Enum.count(team2_v_team1_up_to_round4) == 2
 
     team1_and_team2_up_to_round4 =
-      BallotList.filter(ballots, team: "Team 1", team: "Team 2", up_to_round: 4)
+      BallotList.filter(ballots, team: team1, team: "Team 2", up_to_round: 4)
 
     assert Enum.count(team1_and_team2_up_to_round4) == 2
     assert BallotList.filter(ballots, round_number: 5, side: :defense) == ["Team 7", "Team 9"]

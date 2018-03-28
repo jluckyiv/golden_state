@@ -33,10 +33,10 @@ defmodule RankingTest do
     round1 = Tournament.seed_round1(teams)
 
     assert round1 == [
-             [shasta, carmel],
-             [venture, tam],
-             [university, redlands],
-             [king, trinity]
+             {shasta, carmel},
+             {venture, tam},
+             {university, redlands},
+             {king, trinity}
            ]
 
     r1_ballots = [
@@ -45,68 +45,66 @@ defmodule RankingTest do
         prosecution: shasta,
         defense: carmel,
         round_number: 1,
-        prosecution_score: 100,
-        defense_score: 102
+        prosecution_total_score: 100,
+        defense_total_score: 102
       ),
       Ballot.new(
         scorer: "Klein",
         prosecution: shasta,
         defense: carmel,
         round_number: 1,
-        prosecution_score: 110,
-        defense_score: 108
+        prosecution_total_score: 110,
+        defense_total_score: 108
       ),
       Ballot.new(
         scorer: "Near",
         prosecution: venture,
         defense: tam,
         round_number: 1,
-        prosecution_score: 110,
-        defense_score: 101
+        prosecution_total_score: 110,
+        defense_total_score: 101
       ),
       Ballot.new(
         scorer: "Junker",
         prosecution: venture,
         defense: tam,
         round_number: 1,
-        prosecution_score: 102,
-        defense_score: 96
+        prosecution_total_score: 102,
+        defense_total_score: 96
       ),
       Ballot.new(
         scorer: "Barker",
         prosecution: university,
         defense: redlands,
         round_number: 1,
-        prosecution_score: 99,
-        defense_score: 104
+        prosecution_total_score: 99,
+        defense_total_score: 104
       ),
       Ballot.new(
         scorer: "Knaack",
         prosecution: university,
         defense: redlands,
         round_number: 1,
-        prosecution_score: 99,
-        defense_score: 108
+        prosecution_total_score: 99,
+        defense_total_score: 108
       ),
       Ballot.new(
         scorer: "Talmachoff",
         prosecution: king,
         defense: trinity,
         round_number: 1,
-        prosecution_score: 112,
-        defense_score: 112
+        prosecution_total_score: 112,
+        defense_total_score: 112
       ),
       Ballot.new(
         scorer: "Gaughan",
         prosecution: king,
         defense: trinity,
         round_number: 1,
-        prosecution_score: 93,
-        defense_score: 96
+        prosecution_total_score: 93,
+        defense_total_score: 96
       )
     ]
-
-    round1_rankings = Ranking.rankings(teams, r1_ballots)
 
     assert BallotList.ballots_won(r1_ballots, redlands) == 2.0
     assert BallotList.ballots_won(r1_ballots, venture) == 2.0
@@ -126,6 +124,8 @@ defmodule RankingTest do
     assert BallotList.point_differential(r1_ballots, university) == -14
     assert BallotList.point_differential(r1_ballots, tam) == -15
 
+    round1_rankings = Ranking.rankings(teams, r1_ballots)
+
     assert round1_rankings == [
              venture,
              redlands,
@@ -140,10 +140,10 @@ defmodule RankingTest do
     round2 = Tournament.seed_round2(round1_rankings, round1)
 
     assert round2 == [
-             [redlands, venture],
-             [trinity, shasta],
-             [carmel, king],
-             [tam, university]
+             {redlands, venture},
+             {trinity, shasta},
+             {carmel, king},
+             {tam, university}
            ]
 
     round2_ballots = [
@@ -152,64 +152,64 @@ defmodule RankingTest do
         prosecution: redlands,
         defense: venture,
         round_number: 2,
-        prosecution_score: 104,
-        defense_score: 92
+        prosecution_total_score: 104,
+        defense_total_score: 92
       ),
       Ballot.new(
         scorer: "Klein",
         prosecution: redlands,
         defense: venture,
         round_number: 2,
-        prosecution_score: 87,
-        defense_score: 88
+        prosecution_total_score: 87,
+        defense_total_score: 88
       ),
       Ballot.new(
         scorer: "Near",
         prosecution: trinity,
         defense: shasta,
         round_number: 2,
-        prosecution_score: 101,
-        defense_score: 109
+        prosecution_total_score: 101,
+        defense_total_score: 109
       ),
       Ballot.new(
         scorer: "Junker",
         prosecution: trinity,
         defense: shasta,
         round_number: 2,
-        prosecution_score: 108,
-        defense_score: 108
+        prosecution_total_score: 108,
+        defense_total_score: 108
       ),
       Ballot.new(
         scorer: "Barker",
         prosecution: carmel,
         defense: king,
         round_number: 2,
-        prosecution_score: 121,
-        defense_score: 109
+        prosecution_total_score: 121,
+        defense_total_score: 109
       ),
       Ballot.new(
         scorer: "Knaack",
         prosecution: carmel,
         defense: king,
         round_number: 2,
-        prosecution_score: 109,
-        defense_score: 111
+        prosecution_total_score: 109,
+        defense_total_score: 111
       ),
       Ballot.new(
         scorer: "Talmachoff",
         prosecution: tam,
         defense: university,
         round_number: 2,
-        prosecution_score: 98,
-        defense_score: 90
+        prosecution_total_score: 98,
+        defense_total_score: 90
       ),
       Ballot.new(
         scorer: "Gaughan",
         prosecution: tam,
         defense: university,
         round_number: 2,
-        prosecution_score: 83,
-        defense_score: 72
+        prosecution_total_score: 83,
+        defense_total_score: 72
       )
     ]
 
@@ -249,10 +249,10 @@ defmodule RankingTest do
     round3 = Tournament.seed_round3(round2_rankings)
 
     assert round3 == [
-             [venture, redlands],
-             [shasta, carmel],
-             [trinity, tam],
-             [king, university]
+             {venture, redlands},
+             {shasta, carmel},
+             {trinity, tam},
+             {king, university}
            ]
 
     # fix [venture, redlands] conflict
@@ -262,64 +262,64 @@ defmodule RankingTest do
         prosecution: shasta,
         defense: redlands,
         round_number: 3,
-        prosecution_score: 98,
-        defense_score: 105
+        prosecution_total_score: 98,
+        defense_total_score: 105
       ),
       Ballot.new(
         scorer: "Klein",
         prosecution: shasta,
         defense: redlands,
         round_number: 3,
-        prosecution_score: 110,
-        defense_score: 109
+        prosecution_total_score: 110,
+        defense_total_score: 109
       ),
       Ballot.new(
         scorer: "Near",
         prosecution: venture,
         defense: carmel,
         round_number: 3,
-        prosecution_score: 68,
-        defense_score: 65
+        prosecution_total_score: 68,
+        defense_total_score: 65
       ),
       Ballot.new(
         scorer: "Junker",
         prosecution: venture,
         defense: carmel,
         round_number: 3,
-        prosecution_score: 104,
-        defense_score: 96
+        prosecution_total_score: 104,
+        defense_total_score: 96
       ),
       Ballot.new(
         scorer: "Barker",
         prosecution: trinity,
         defense: tam,
         round_number: 3,
-        prosecution_score: 91,
-        defense_score: 99
+        prosecution_total_score: 91,
+        defense_total_score: 99
       ),
       Ballot.new(
         scorer: "Knaack",
         prosecution: trinity,
         defense: tam,
         round_number: 3,
-        prosecution_score: 105,
-        defense_score: 110
+        prosecution_total_score: 105,
+        defense_total_score: 110
       ),
       Ballot.new(
         scorer: "Talmachoff",
         prosecution: king,
         defense: university,
         round_number: 3,
-        prosecution_score: 96,
-        defense_score: 107
+        prosecution_total_score: 96,
+        defense_total_score: 107
       ),
       Ballot.new(
         scorer: "Gaughan",
         prosecution: king,
         defense: university,
         round_number: 3,
-        prosecution_score: 84,
-        defense_score: 100
+        prosecution_total_score: 84,
+        defense_total_score: 100
       )
     ]
 
@@ -359,10 +359,10 @@ defmodule RankingTest do
     round4 = Tournament.seed_round4(round3_rankings, round3)
 
     assert round4 == [
-             [redlands, venture],
-             [tam, shasta],
-             [carmel, trinity],
-             [university, king]
+             {redlands, venture},
+             {tam, shasta},
+             {carmel, trinity},
+             {university, king}
            ]
 
     # fix [redlands, venture] with redlands <> carmel
@@ -372,64 +372,64 @@ defmodule RankingTest do
         prosecution: carmel,
         defense: shasta,
         round_number: 4,
-        prosecution_score: 111,
-        defense_score: 110
+        prosecution_total_score: 111,
+        defense_total_score: 110
       ),
       Ballot.new(
         scorer: "Klein",
         prosecution: carmel,
         defense: shasta,
         round_number: 4,
-        prosecution_score: 112,
-        defense_score: 113
+        prosecution_total_score: 112,
+        defense_total_score: 113
       ),
       Ballot.new(
         scorer: "Near",
         prosecution: tam,
         defense: venture,
         round_number: 4,
-        prosecution_score: 115,
-        defense_score: 109
+        prosecution_total_score: 115,
+        defense_total_score: 109
       ),
       Ballot.new(
         scorer: "Junker",
         prosecution: tam,
         defense: venture,
         round_number: 4,
-        prosecution_score: 109,
-        defense_score: 109
+        prosecution_total_score: 109,
+        defense_total_score: 109
       ),
       Ballot.new(
         scorer: "Barker",
         prosecution: redlands,
         defense: trinity,
         round_number: 4,
-        prosecution_score: 105,
-        defense_score: 104
+        prosecution_total_score: 105,
+        defense_total_score: 104
       ),
       Ballot.new(
         scorer: "Knaack",
         prosecution: redlands,
         defense: trinity,
         round_number: 4,
-        prosecution_score: 113,
-        defense_score: 106
+        prosecution_total_score: 113,
+        defense_total_score: 106
       ),
       Ballot.new(
         scorer: "Talmachoff",
         prosecution: university,
         defense: king,
         round_number: 4,
-        prosecution_score: 96,
-        defense_score: 107
+        prosecution_total_score: 96,
+        defense_total_score: 107
       ),
       Ballot.new(
         scorer: "Gaughan",
         prosecution: university,
         defense: king,
         round_number: 4,
-        prosecution_score: 84,
-        defense_score: 100
+        prosecution_total_score: 84,
+        defense_total_score: 100
       )
     ]
 

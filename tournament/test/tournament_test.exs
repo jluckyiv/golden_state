@@ -30,9 +30,9 @@ defmodule TournamentTest do
     teams = ~w[Carmel King Menlo Shasta Tamalpais Trinity]
 
     assert Tournament.seed_round1(teams) == [
-             ~w[Shasta Carmel],
-             ~w[Tamalpais Menlo],
-             ~w[King Trinity]
+             {"Shasta", "Carmel"},
+             {"Tamalpais", "Menlo"},
+             {"King", "Trinity"}
            ]
   end
 
@@ -41,9 +41,9 @@ defmodule TournamentTest do
     teams = ~w[Carmel King Menlo Shasta Tamalpais Trinity]
 
     assert Tournament.seed_round1(teams, prosecution: "Trinity", defense: "Tamalpais") == [
-             ~w[Trinity Tamalpais],
-             ~w[Shasta Carmel],
-             ~w[Menlo King]
+             {"Trinity", "Tamalpais"},
+             {"Shasta", "Carmel"},
+             {"Menlo", "King"}
            ]
   end
 
@@ -60,17 +60,17 @@ defmodule TournamentTest do
     ]
 
     round1 = [
-      ["Tam", "Redlands"],
-      ["Venture", "Shasta"],
-      ["King", "University"],
-      ["Trinity", "Carmel"]
+      {"Tam", "Redlands"},
+      {"Venture", "Shasta"},
+      {"King", "University"},
+      {"Trinity", "Carmel"}
     ]
 
     assert Tournament.seed_round2(rankings, round1) == [
-             ["Shasta", "Tam"],
-             ["Carmel", "King"],
-             ["University", "Venture"],
-             ["Redlands", "Trinity"]
+             {"Shasta", "Tam"},
+             {"Carmel", "King"},
+             {"University", "Venture"},
+             {"Redlands", "Trinity"}
            ]
   end
 
@@ -90,18 +90,18 @@ defmodule TournamentTest do
 
     # DPPD
     assert Tournament.seed_round3(rankings) == [
-             ["Shasta", "Tam"],
-             ["King", "Carmel"],
-             ["Trinity", "Venture"],
-             ["University", "Redlands"]
+             {"Shasta", "Tam"},
+             {"King", "Carmel"},
+             {"Trinity", "Venture"},
+             {"University", "Redlands"}
            ]
 
     # PDDP
     assert Tournament.seed_round3(rankings) == [
-             ["Tam", "Shasta"],
-             ["Carmel", "King"],
-             ["Venture", "Trinity"],
-             ["Redlands", "University"]
+             {"Tam", "Shasta"},
+             {"Carmel", "King"},
+             {"Venture", "Trinity"},
+             {"Redlands", "University"}
            ]
   end
 
@@ -118,17 +118,17 @@ defmodule TournamentTest do
     ]
 
     round3 = [
-      ["Tam", "Trinity"],
-      ["King", "Venture"],
-      ["Carmel", "Shasta"],
-      ["Redlands", "University"]
+      {"Tam", "Trinity"},
+      {"King", "Venture"},
+      {"Carmel", "Shasta"},
+      {"Redlands", "University"}
     ]
 
     assert Tournament.seed_round4(rankings, round3) == [
-             ["Shasta", "Tam"],
-             ["Venture", "King"],
-             ["Trinity", "Carmel"],
-             ["University", "Redlands"]
+             {"Shasta", "Tam"},
+             {"Venture", "King"},
+             {"Trinity", "Carmel"},
+             {"University", "Redlands"}
            ]
   end
 
@@ -143,22 +143,22 @@ defmodule TournamentTest do
     tournament =
       "Golden State 2018"
       |> Tournament.new()
-      |> Tournament.add_conflict([trinity_a, trinity_b])
-      |> Tournament.add_pairing([carmel, king])
-      |> Tournament.add_pairing([tam, menlo])
+      |> Tournament.add_conflict({trinity_a, trinity_b})
+      |> Tournament.add_pairing({carmel, king})
+      |> Tournament.add_pairing({tam, menlo})
 
-    assert Tournament.conflict?(tournament, [king, carmel]) == true
-    assert Tournament.conflict?(tournament, [tam, menlo]) == true
-    assert Tournament.conflict?(tournament, [trinity_b, trinity_a]) == true
-    assert Tournament.conflict?(tournament, [trinity_a, king]) == false
-    assert Tournament.conflict?(tournament, [trinity_b, menlo]) == false
-    assert Tournament.conflict?(tournament, [carmel, tam]) == false
-    assert Tournament.head_to_head?(tournament, [king, carmel]) == true
-    assert Tournament.head_to_head?(tournament, [tam, menlo]) == true
-    assert Tournament.head_to_head?(tournament, [trinity_b, trinity_a]) == false
-    assert Tournament.head_to_head?(tournament, [trinity_a, king]) == false
-    assert Tournament.head_to_head?(tournament, [trinity_b, menlo]) == false
-    assert Tournament.head_to_head?(tournament, [carmel, tam]) == false
+    assert Tournament.conflict?(tournament, {king, carmel}) == true
+    assert Tournament.conflict?(tournament, {tam, menlo}) == true
+    assert Tournament.conflict?(tournament, {trinity_b, trinity_a}) == true
+    assert Tournament.conflict?(tournament, {trinity_a, king}) == false
+    assert Tournament.conflict?(tournament, {trinity_b, menlo}) == false
+    assert Tournament.conflict?(tournament, {carmel, tam}) == false
+    assert Tournament.head_to_head?(tournament, {king, carmel}) == true
+    assert Tournament.head_to_head?(tournament, {tam, menlo}) == true
+    assert Tournament.head_to_head?(tournament, {trinity_b, trinity_a}) == false
+    assert Tournament.head_to_head?(tournament, {trinity_a, king}) == false
+    assert Tournament.head_to_head?(tournament, {trinity_b, menlo}) == false
+    assert Tournament.head_to_head?(tournament, {carmel, tam}) == false
   end
 
   test "lower-ranked team" do
@@ -174,13 +174,13 @@ defmodule TournamentTest do
       menlo
     ]
 
-    assert Tournament.lower_ranked_team(rankings, [trinity_a, trinity_b]) == trinity_b
-    assert Tournament.lower_ranked_team(rankings, [trinity_a, king]) == king
-    assert Tournament.lower_ranked_team(rankings, [trinity_a, menlo]) == menlo
-    assert Tournament.lower_ranked_team(rankings, [trinity_b, king]) == king
-    assert Tournament.lower_ranked_team(rankings, [trinity_b, menlo]) == menlo
-    assert Tournament.lower_ranked_team(rankings, [king, menlo]) == menlo
-    assert Tournament.lower_ranked_team(rankings, [menlo, king]) == menlo
+    assert Tournament.lower_ranked_team(rankings, {trinity_a, trinity_b}) == trinity_b
+    assert Tournament.lower_ranked_team(rankings, {trinity_a, king}) == king
+    assert Tournament.lower_ranked_team(rankings, {trinity_a, menlo}) == menlo
+    assert Tournament.lower_ranked_team(rankings, {trinity_b, king}) == king
+    assert Tournament.lower_ranked_team(rankings, {trinity_b, menlo}) == menlo
+    assert Tournament.lower_ranked_team(rankings, {king, menlo}) == menlo
+    assert Tournament.lower_ranked_team(rankings, {menlo, king}) == menlo
   end
 
   test "with rankings" do
@@ -209,38 +209,38 @@ defmodule TournamentTest do
 
   test "swap pairings" do
     pairings = [
-      ["Tam", "Shasta"],
-      ["King", "Carmel"],
-      ["Venture", "Trinity"],
-      ["Trinity", "Redlands"]
+      {"Tam", "Shasta"},
+      {"King", "Carmel"},
+      {"Venture", "Trinity"},
+      {"Trinity", "Redlands"}
     ]
 
     assert Tournament.swap_team(pairings, "Tam", :down) == [
-             ["King", "Shasta"],
-             ["Tam", "Carmel"],
-             ["Venture", "Trinity"],
-             ["Trinity", "Redlands"]
+             {"King", "Shasta"},
+             {"Tam", "Carmel"},
+             {"Venture", "Trinity"},
+             {"Trinity", "Redlands"}
            ]
 
     assert Tournament.swap_team(pairings, "Carmel", :down) == [
-             ["Tam", "Shasta"],
-             ["King", "Trinity"],
-             ["Venture", "Carmel"],
-             ["Trinity", "Redlands"]
+             {"Tam", "Shasta"},
+             {"King", "Trinity"},
+             {"Venture", "Carmel"},
+             {"Trinity", "Redlands"}
            ]
 
     assert Tournament.swap_team(pairings, "King", :up) == [
-             ["King", "Shasta"],
-             ["Tam", "Carmel"],
-             ["Venture", "Trinity"],
-             ["Trinity", "Redlands"]
+             {"King", "Shasta"},
+             {"Tam", "Carmel"},
+             {"Venture", "Trinity"},
+             {"Trinity", "Redlands"}
            ]
 
     assert Tournament.swap_team(pairings, "Carmel", :up) == [
-             ["Tam", "Carmel"],
-             ["King", "Shasta"],
-             ["Venture", "Trinity"],
-             ["Trinity", "Redlands"]
+             {"Tam", "Carmel"},
+             {"King", "Shasta"},
+             {"Venture", "Trinity"},
+             {"Trinity", "Redlands"}
            ]
   end
 end

@@ -5,11 +5,11 @@ defmodule BallotTest do
     ballot =
       Ballot.new(
         defense: "defense",
-        defense_score: 101,
+        defense_total_score: 101,
         defense_closing_score: 9,
         defense_motion_score: 8,
         prosecution: "prosecution",
-        prosecution_score: 100,
+        prosecution_total_score: 100,
         prosecution_closing_score: 7,
         prosecution_motion_score: 6,
         round_number: 1,
@@ -24,11 +24,11 @@ defmodule BallotTest do
     assert Ballot.defense(ballot) == "defense"
     assert Ballot.defense_closing_score(ballot) == 9
     assert Ballot.defense_motion_score(ballot) == 8
-    assert Ballot.defense_score(ballot) == 101
+    assert Ballot.defense_total_score(ballot) == 101
     assert Ballot.prosecution(ballot) == "prosecution"
     assert Ballot.prosecution_closing_score(ballot) == 7
     assert Ballot.prosecution_motion_score(ballot) == 6
-    assert Ballot.prosecution_score(ballot) == 100
+    assert Ballot.prosecution_total_score(ballot) == 100
     assert Ballot.round_number(ballot) == 1
     assert Ballot.scorer(ballot) == "Scorer"
   end

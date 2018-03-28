@@ -51,7 +51,6 @@ defmodule Ranking.Impl do
 
   def ballots_won(ballots, team) do
     BallotList.ballots_won(ballots, team)
-    # |> IO.inspect(label: "Ballots won #{team.name}")
   end
 
   def closing_score(ballots, team) do
