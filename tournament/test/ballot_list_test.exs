@@ -132,53 +132,53 @@ defmodule BallotListTest do
 
   test "closing score", context do
     ballots = context[:ballots]
-    assert BallotList.closing_score(ballots, "Team 5") == 18
+    assert BallotList.total(ballots, "Team 5", :closing_score) == 18
   end
 
   test "motion score", context do
     ballots = context[:ballots]
-    assert BallotList.motion_score(ballots, "Team 5") == 16
-    assert BallotList.motion_score(ballots, "Team 6") == 0
+    assert BallotList.total(ballots, "Team 5", :motion_score) == 16
+    assert BallotList.total(ballots, "Team 6", :motion_score) == 0
   end
 
   test "total ballots won", context do
     ballots = context[:ballots]
     team1 = context[:team1]
-    assert BallotList.ballots_won(ballots, team1) == 3.5
-    assert BallotList.ballots_won(ballots, "Team 2") == 0.0
-    assert BallotList.ballots_won(ballots, "Team 3") == 1.5
-    assert BallotList.ballots_won(ballots, "Team 4") == 1.0
-    assert BallotList.ballots_won(ballots, "Team 5") == 2.0
+    assert BallotList.total(ballots, team1, :ballots_won) == 3.5
+    assert BallotList.total(ballots, "Team 2", :ballots_won) == 0.0
+    assert BallotList.total(ballots, "Team 3", :ballots_won) == 1.5
+    assert BallotList.total(ballots, "Team 4", :ballots_won) == 1.0
+    assert BallotList.total(ballots, "Team 5", :ballots_won) == 2.0
   end
 
   test "total point differential", context do
     ballots = context[:ballots]
     team1 = context[:team1]
-    assert BallotList.point_differential(ballots, team1) == 2
-    assert BallotList.point_differential(ballots, "Team 2") == -3
-    assert BallotList.point_differential(ballots, "Team 3") == -11
-    assert BallotList.point_differential(ballots, "Team 4") == 0
-    assert BallotList.point_differential(ballots, "Team 5") == 12
+    assert BallotList.total(ballots, team1, :point_differential) == 2
+    assert BallotList.total(ballots, "Team 2", :point_differential) == -3
+    assert BallotList.total(ballots, "Team 3", :point_differential) == -11
+    assert BallotList.total(ballots, "Team 4", :point_differential) == 0
+    assert BallotList.total(ballots, "Team 5", :point_differential) == 12
   end
 
   test "opponents", context do
     ballots = context[:ballots]
     team1 = context[:team1]
-    assert BallotList.opponents(ballots, team1) == ["Team 2", "Team 3", "Team 4"]
-    assert BallotList.opponents(ballots, "Team 2") == [team1]
-    assert BallotList.opponents(ballots, "Team 3") == [team1, "Team 5"]
-    assert BallotList.opponents(ballots, "Team 4") == [team1]
-    assert BallotList.opponents(ballots, "Team 5") == ["Team 3"]
+    assert BallotList.filter(ballots, opponents: team1) == ["Team 2", "Team 3", "Team 4"]
+    assert BallotList.filter(ballots, opponents: "Team 2") == [team1]
+    assert BallotList.filter(ballots, opponents: "Team 3") == [team1, "Team 5"]
+    assert BallotList.filter(ballots, opponents: "Team 4") == [team1]
+    assert BallotList.filter(ballots, opponents: "Team 5") == ["Team 3"]
   end
 
   test "combined strength", context do
     ballots = context[:ballots]
     team1 = context[:team1]
-    assert BallotList.combined_strength(ballots, team1) == 2.5
-    assert BallotList.combined_strength(ballots, "Team 2") == 3.5
-    assert BallotList.combined_strength(ballots, "Team 3") == 5.5
-    assert BallotList.combined_strength(ballots, "Team 4") == 3.5
-    assert BallotList.combined_strength(ballots, "Team 5") == 1.5
+    assert BallotList.total(ballots, team1, :combined_strength) == 2.5
+    assert BallotList.total(ballots, "Team 2", :combined_strength) == 3.5
+    assert BallotList.total(ballots, "Team 3", :combined_strength) == 5.5
+    assert BallotList.total(ballots, "Team 4", :combined_strength) == 3.5
+    assert BallotList.total(ballots, "Team 5", :combined_strength) == 1.5
   end
 
   test "filter", context do

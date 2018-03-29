@@ -22,13 +22,7 @@ defmodule BallotTest do
   test "ballot properties", context do
     ballot = context[:ballot]
     assert Ballot.defense(ballot) == "defense"
-    assert Ballot.defense_closing_score(ballot) == 9
-    assert Ballot.defense_motion_score(ballot) == 8
-    assert Ballot.defense_total_score(ballot) == 101
     assert Ballot.prosecution(ballot) == "prosecution"
-    assert Ballot.prosecution_closing_score(ballot) == 7
-    assert Ballot.prosecution_motion_score(ballot) == 6
-    assert Ballot.prosecution_total_score(ballot) == 100
     assert Ballot.round_number(ballot) == 1
     assert Ballot.scorer(ballot) == "Scorer"
   end
@@ -82,9 +76,9 @@ defmodule BallotTest do
 
   test "has team", context do
     ballot = context[:ballot]
-    assert Ballot.has_team?(ballot, "defense") == true
-    assert Ballot.has_team?(ballot, "prosecution") == true
-    assert Ballot.has_team?(ballot, "unknown") == false
+    assert Ballot.team?(ballot, "defense") == true
+    assert Ballot.team?(ballot, "prosecution") == true
+    assert Ballot.team?(ballot, "unknown") == false
   end
 
   test "not on ballot", context do

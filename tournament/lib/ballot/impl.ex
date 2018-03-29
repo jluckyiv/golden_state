@@ -32,33 +32,29 @@ defmodule Ballot.Impl do
   def closing_score(ballot, :prosecution), do: ballot.prosecution_closing_score
 
   def closing_score(%{defense: team} = ballot, team) do
-    ballot.defense_closing_score
+    closing_score(ballot, :defense)
   end
 
   def closing_score(%{prosecution: team} = ballot, team) do
-    ballot.prosecution_closing_score
+    closing_score(ballot, :prosecution)
   end
 
   def closing_score(_, _), do: 0
 
   def defense(ballot), do: ballot.defense
-  def defense_closing_score(ballot), do: ballot.defense_closing_score
-  def defense_motion_score(ballot), do: ballot.defense_motion_score
-  def defense_total_score(ballot), do: ballot.defense_total_score
 
-  def has_team?(%{defense: team}, team), do: true
-  def has_team?(%{prosecution: team}, team), do: true
-  def has_team?(_, _), do: false
+  def defense?(%{defense: team}, team), do: true
+  def defense?(_, _), do: false
 
   def motion_score(ballot, :defense), do: ballot.defense_motion_score
   def motion_score(ballot, :prosecution), do: ballot.prosecution_motion_score
 
   def motion_score(%{defense: team} = ballot, team) do
-    ballot.defense_motion_score
+    motion_score(ballot, :defense)
   end
 
   def motion_score(%{prosecution: team} = ballot, team) do
-    ballot.prosecution_motion_score
+    motion_score(ballot, :prosecution)
   end
 
   def motion_score(_, _), do: 0
@@ -88,32 +84,45 @@ defmodule Ballot.Impl do
   def point_differential(_, _), do: 0
 
   def prosecution(ballot), do: ballot.prosecution
-  def prosecution_closing_score(ballot), do: ballot.prosecution_closing_score
-  def prosecution_motion_score(ballot), do: ballot.prosecution_motion_score
-  def prosecution_total_score(ballot), do: ballot.prosecution_total_score
+  def prosecution?(%{prosecution: team}, team), do: true
+  def prosecution?(_, _), do: false
 
   def round_number(ballot), do: ballot.round_number
+
+  def round_number?(ballot, round_number) do
+    ballot.round_number == round_number
+  end
+
   def scorer(ballot), do: ballot.scorer
-  def tie?(ballot), do: ballot.prosecution_total_score == ballot.defense_total_score
+
+  def team?(ballot, team) do
+    prosecution?(ballot, team) or defense?(ballot, team)
+  end
+
+  def tie?(ballot) do
+    ballot.prosecution_total_score == ballot.defense_total_score
+  end
 
   def total_score(ballot, :defense), do: ballot.defense_total_score
   def total_score(ballot, :prosecution), do: ballot.prosecution_total_score
 
   def total_score(%{defense: team} = ballot, team) do
-    ballot.defense_total_score
+    total_score(ballot, :defense)
   end
 
   def total_score(%{prosecution: team} = ballot, team) do
-    ballot.prosecution_total_score
+    total_score(ballot, :prosecution)
   end
 
   def total_score(_, _), do: 0
 
   defp win?(ballot, :defense) do
-    ballot.defense_total_score > ballot.prosecution_total_score
+    total_score(ballot, :defense) > total_score(ballot, :prosecution)
   end
 
   defp win?(ballot, :prosecution) do
-    ballot.prosecution_total_score > ballot.defense_total_score
+    total_score(ballot, :prosecution) > total_score(ballot, :defense)
   end
+
+  defp win?(_, _), do: false
 end

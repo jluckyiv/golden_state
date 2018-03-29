@@ -106,23 +106,23 @@ defmodule RankingTest do
       )
     ]
 
-    assert BallotList.ballots_won(r1_ballots, redlands) == 2.0
-    assert BallotList.ballots_won(r1_ballots, venture) == 2.0
-    assert BallotList.ballots_won(r1_ballots, trinity) == 1.5
-    assert BallotList.ballots_won(r1_ballots, carmel) == 1.0
-    assert BallotList.ballots_won(r1_ballots, shasta) == 1.0
-    assert BallotList.ballots_won(r1_ballots, king) == 0.5
-    assert BallotList.ballots_won(r1_ballots, tam) == 0.0
-    assert BallotList.ballots_won(r1_ballots, university) == 0.0
+    assert BallotList.total(r1_ballots, redlands, :ballots_won) == 2.0
+    assert BallotList.total(r1_ballots, venture, :ballots_won) == 2.0
+    assert BallotList.total(r1_ballots, trinity, :ballots_won) == 1.5
+    assert BallotList.total(r1_ballots, carmel, :ballots_won) == 1.0
+    assert BallotList.total(r1_ballots, shasta, :ballots_won) == 1.0
+    assert BallotList.total(r1_ballots, king, :ballots_won) == 0.5
+    assert BallotList.total(r1_ballots, tam, :ballots_won) == 0.0
+    assert BallotList.total(r1_ballots, university, :ballots_won) == 0.0
 
-    assert BallotList.point_differential(r1_ballots, venture) == 15
-    assert BallotList.point_differential(r1_ballots, redlands) == 14
-    assert BallotList.point_differential(r1_ballots, trinity) == 3
-    assert BallotList.point_differential(r1_ballots, carmel) == 0
-    assert BallotList.point_differential(r1_ballots, shasta) == 0
-    assert BallotList.point_differential(r1_ballots, king) == -3
-    assert BallotList.point_differential(r1_ballots, university) == -14
-    assert BallotList.point_differential(r1_ballots, tam) == -15
+    assert BallotList.total(r1_ballots, venture, :point_differential) == 15
+    assert BallotList.total(r1_ballots, redlands, :point_differential) == 14
+    assert BallotList.total(r1_ballots, trinity, :point_differential) == 3
+    assert BallotList.total(r1_ballots, carmel, :point_differential) == 0
+    assert BallotList.total(r1_ballots, shasta, :point_differential) == 0
+    assert BallotList.total(r1_ballots, king, :point_differential) == -3
+    assert BallotList.total(r1_ballots, university, :point_differential) == -14
+    assert BallotList.total(r1_ballots, tam, :point_differential) == -15
 
     round1_rankings = Ranking.rankings(teams, r1_ballots)
 
@@ -217,14 +217,14 @@ defmodule RankingTest do
 
     round2_rankings = Ranking.rankings(teams, r1_r2_ballots)
 
-    assert BallotList.ballots_won(r1_r2_ballots, redlands) == 3.0
-    assert BallotList.ballots_won(r1_r2_ballots, venture) == 3.0
-    assert BallotList.ballots_won(r1_r2_ballots, shasta) == 2.5
-    assert BallotList.ballots_won(r1_r2_ballots, trinity) == 2.0
-    assert BallotList.ballots_won(r1_r2_ballots, carmel) == 2.0
-    assert BallotList.ballots_won(r1_r2_ballots, tam) == 2.0
-    assert BallotList.ballots_won(r1_r2_ballots, king) == 1.5
-    assert BallotList.ballots_won(r1_r2_ballots, university) == 0.0
+    assert BallotList.total(r1_r2_ballots, redlands, :ballots_won) == 3.0
+    assert BallotList.total(r1_r2_ballots, venture, :ballots_won) == 3.0
+    assert BallotList.total(r1_r2_ballots, shasta, :ballots_won) == 2.5
+    assert BallotList.total(r1_r2_ballots, trinity, :ballots_won) == 2.0
+    assert BallotList.total(r1_r2_ballots, carmel, :ballots_won) == 2.0
+    assert BallotList.total(r1_r2_ballots, tam, :ballots_won) == 2.0
+    assert BallotList.total(r1_r2_ballots, king, :ballots_won) == 1.5
+    assert BallotList.total(r1_r2_ballots, university, :ballots_won) == 0.0
 
     # assert BallotList.point_differential(r1_r2_ballots, redlands) == 29
     # assert BallotList.point_differential(r1_r2_ballots, carmel) == 10
@@ -325,14 +325,14 @@ defmodule RankingTest do
 
     r1_r2_r3_ballots = r1_ballots ++ round2_ballots ++ round3_ballots
 
-    assert BallotList.ballots_won(r1_r2_r3_ballots, venture) == 5.0
-    assert BallotList.ballots_won(r1_r2_r3_ballots, redlands) == 4.0
-    assert BallotList.ballots_won(r1_r2_r3_ballots, tam) == 4.0
-    assert BallotList.ballots_won(r1_r2_r3_ballots, shasta) == 3.5
-    assert BallotList.ballots_won(r1_r2_r3_ballots, carmel) == 2.0
-    assert BallotList.ballots_won(r1_r2_r3_ballots, university) == 2.0
-    assert BallotList.ballots_won(r1_r2_r3_ballots, trinity) == 2.0
-    assert BallotList.ballots_won(r1_r2_r3_ballots, king) == 1.5
+    assert BallotList.total(r1_r2_r3_ballots, venture, :ballots_won) == 5.0
+    assert BallotList.total(r1_r2_r3_ballots, redlands, :ballots_won) == 4.0
+    assert BallotList.total(r1_r2_r3_ballots, tam, :ballots_won) == 4.0
+    assert BallotList.total(r1_r2_r3_ballots, shasta, :ballots_won) == 3.5
+    assert BallotList.total(r1_r2_r3_ballots, carmel, :ballots_won) == 2.0
+    assert BallotList.total(r1_r2_r3_ballots, university, :ballots_won) == 2.0
+    assert BallotList.total(r1_r2_r3_ballots, trinity, :ballots_won) == 2.0
+    assert BallotList.total(r1_r2_r3_ballots, king, :ballots_won) == 1.5
 
     # assert BallotList.point_differential(r1_r2_r3_ballots, redlands) == 35
     # assert BallotList.point_differential(r1_r2_r3_ballots, carmel) == 21
@@ -458,14 +458,14 @@ defmodule RankingTest do
     ## total ballots, head to head, combined_strength, point_differential, distance
     ## head-to-head: ballots, point_differential, closing score, motion score
 
-    assert BallotList.ballots_won(r1_r2_r3_r4_ballots, redlands) == 6.0
-    assert BallotList.ballots_won(r1_r2_r3_r4_ballots, tam) == 5.5
-    assert BallotList.ballots_won(r1_r2_r3_r4_ballots, shasta) == 4.5
-    assert BallotList.ballots_won(r1_r2_r3_r4_ballots, venture) == 5.5
-    assert BallotList.ballots_won(r1_r2_r3_r4_ballots, king) == 3.5
-    assert BallotList.ballots_won(r1_r2_r3_r4_ballots, carmel) == 3.0
-    assert BallotList.ballots_won(r1_r2_r3_r4_ballots, trinity) == 2.0
-    assert BallotList.ballots_won(r1_r2_r3_r4_ballots, university) == 2.0
+    assert BallotList.total(r1_r2_r3_r4_ballots, redlands, :ballots_won) == 6.0
+    assert BallotList.total(r1_r2_r3_r4_ballots, tam, :ballots_won) == 5.5
+    assert BallotList.total(r1_r2_r3_r4_ballots, shasta, :ballots_won) == 4.5
+    assert BallotList.total(r1_r2_r3_r4_ballots, venture, :ballots_won) == 5.5
+    assert BallotList.total(r1_r2_r3_r4_ballots, king, :ballots_won) == 3.5
+    assert BallotList.total(r1_r2_r3_r4_ballots, carmel, :ballots_won) == 3.0
+    assert BallotList.total(r1_r2_r3_r4_ballots, trinity, :ballots_won) == 2.0
+    assert BallotList.total(r1_r2_r3_r4_ballots, university, :ballots_won) == 2.0
 
     # assert BallotList.point_differential(r1_r2_r3_r4_ballots, redlands) == 34
     # assert BallotList.point_differential(r1_r2_r3_r4_ballots, tam) == 1
