@@ -1,6 +1,9 @@
 defmodule Ranking do
   alias __MODULE__.Impl
 
-  defdelegate rankings(teams, ballots), to: Impl
-  defdelegate final_rankings(teams, ballots), to: Impl
+  defdelegate ranking(ballots, team), to: Impl
+  defdelegate rankings(ballots), to: Impl
+  defdelegate rankings(ballots, opts), to: Impl
+  defdelegate final_ranking(ballots, team), to: Impl
+  defdelegate final_rankings(ballots), to: Impl
 end
