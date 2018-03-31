@@ -25,7 +25,7 @@ defmodule Ballot.Impl do
   end
 
   def bailiff_score(ballot, :defense), do: bailiff_score(ballot)
-  def bailiff_score(_ballot, _team), do: 0
+  def bailiff_score(_, _), do: 0
   def bailiff_score(ballot), do: ballot.bailiff_score
 
   def ballots_won(%{defense: team} = ballot, team) do
@@ -53,7 +53,7 @@ defmodule Ballot.Impl do
   end
 
   def clerk_score(ballot, :prosecution), do: clerk_score(ballot)
-  def clerk_score(_ballot, _team), do: 0
+  def clerk_score(_, _), do: 0
   def clerk_score(ballot), do: ballot.clerk_score
 
   def closing_score(ballot, :defense), do: ballot.defense_closing_score
