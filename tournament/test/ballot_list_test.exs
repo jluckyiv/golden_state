@@ -269,16 +269,16 @@ defmodule BallotListTest do
     ballots = context[:ballots]
     ranks = BallotList.total(ballots, :attorney_ranks)
     assert Enum.count(ranks) == 4
-    assert Rank.find(ranks, name: "Attorney 12").score == 9
-    assert Rank.find(ranks, name: "Attorney 13").score == 8
+    assert Rank.Individual.find(ranks, name: "Attorney 12").score == 9
+    assert Rank.Individual.find(ranks, name: "Attorney 13").score == 8
   end
 
   test "witness ranks", context do
     ballots = context[:ballots]
     ranks = BallotList.total(ballots, :witness_ranks)
     assert Enum.count(ranks) == 4
-    assert Rank.find(ranks, name: "Witness 11").score == 10
-    assert Rank.find(ranks, name: "Witness 12").score == 6
+    assert Rank.Individual.find(ranks, name: "Witness 11").score == 10
+    assert Rank.Individual.find(ranks, name: "Witness 12").score == 6
   end
 
   test "filter", context do

@@ -1,5 +1,5 @@
-defmodule Rank do
-  alias Rank.Impl
+defmodule Rank.Individual do
+  alias __MODULE__.Impl
 
   defdelegate add(rank1, rank2), to: Impl
   defdelegate find(ranks, opts), to: Impl

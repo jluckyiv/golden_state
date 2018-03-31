@@ -1,4 +1,4 @@
-defmodule Rank.Impl do
+defmodule Rank.Individual.Impl do
   defstruct name: nil, position: nil, score: 0, side: nil, team: nil
 
   def add(rank1, rank2) do

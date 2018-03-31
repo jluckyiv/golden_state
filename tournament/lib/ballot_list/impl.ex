@@ -64,16 +64,16 @@ defmodule BallotList.Impl do
 
   def total(ballots, :attorney_ranks) do
     ballots
-    |> Rank.from_ballots()
-    |> Rank.totals()
-    |> Rank.filter(position: :attorney)
+    |> Rank.Individual.from_ballots()
+    |> Rank.Individual.totals()
+    |> Rank.Individual.filter(position: :attorney)
   end
 
   def total(ballots, :witness_ranks) do
     ballots
-    |> Rank.from_ballots()
-    |> Rank.totals()
-    |> Rank.filter(position: :witness)
+    |> Rank.Individual.from_ballots()
+    |> Rank.Individual.totals()
+    |> Rank.Individual.filter(position: :witness)
   end
 
   def total(ballots, combined_strength: team) do
@@ -90,20 +90,6 @@ defmodule BallotList.Impl do
     |> Enum.sum()
   end
 
-  defp flatten_ranks(ranks) do
-    ranks
-    |> Enum.reject(&Enum.empty?/1)
-    |> List.flatten()
-  end
-
-  defp format_ranks(ranks) do
-    Enum.map(ranks, fn {{team, name}, rank} -> {team, name, rank} end)
-  end
-
-  defp rank_value({{_team, _name}, rank}) do
-    rank
-  end
-
   defp side(ballots, :prosecution) do
     ballots
     |> Enum.map(&Ballot.prosecution(&1))
@@ -114,26 +100,5 @@ defmodule BallotList.Impl do
     ballots
     |> Enum.map(&Ballot.defense(&1))
     |> Enum.uniq()
-  end
-
-  defp sort_ranks(ranks) do
-    ranks
-    |> Enum.sort(&(rank_value(&1) >= rank_value(&2)))
-  end
-
-  defp sum_ranks(ranks) do
-    ranks
-    |> Enum.reduce(%{}, fn {team, name, rank}, acc ->
-      Map.update(acc, {team, name}, rank, &(&1 + rank))
-    end)
-    |> Enum.to_list()
-  end
-
-  defp total_ranks(ranks) do
-    ranks
-    |> flatten_ranks()
-    |> sum_ranks()
-    |> sort_ranks()
-    |> format_ranks()
   end
 end

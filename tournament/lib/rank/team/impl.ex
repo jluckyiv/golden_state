@@ -1,4 +1,4 @@
-defmodule Ranking.Impl do
+defmodule Rank.Team.Impl do
   def ranking(ballots, team) do
     ballots
     |> rankings()

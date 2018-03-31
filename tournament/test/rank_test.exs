@@ -1,9 +1,9 @@
-defmodule RankTest do
+defmodule Rank.IndividualTest do
   use ExUnit.Case
 
   test "attorney properties" do
     rank =
-      Rank.new(
+      Rank.Individual.new(
         name: "Name",
         position: :attorney,
         score: 5,
@@ -11,16 +11,16 @@ defmodule RankTest do
         team: "Team"
       )
 
-    assert Rank.get(rank, :name) == "Name"
-    assert Rank.get(rank, :position) == :attorney
-    assert Rank.get(rank, :score) == 5
-    assert Rank.get(rank, :side) == :prosecution
-    assert Rank.get(rank, :team) == "Team"
+    assert Rank.Individual.get(rank, :name) == "Name"
+    assert Rank.Individual.get(rank, :position) == :attorney
+    assert Rank.Individual.get(rank, :score) == 5
+    assert Rank.Individual.get(rank, :side) == :prosecution
+    assert Rank.Individual.get(rank, :team) == "Team"
   end
 
   test "format rank" do
     rank =
-      Rank.new(
+      Rank.Individual.new(
         name: "Name",
         position: :attorney,
         score: 5,
@@ -28,7 +28,7 @@ defmodule RankTest do
         team: "Team"
       )
 
-    assert Rank.format(rank, [:name, :position, :score]) == {
+    assert Rank.Individual.format(rank, [:name, :position, :score]) == {
              "Name",
              :attorney,
              5
@@ -37,7 +37,7 @@ defmodule RankTest do
 
   test "motion attorney properties" do
     rank =
-      Rank.new(
+      Rank.Individual.new(
         name: "Name",
         position: :motion,
         score: 5,
@@ -45,12 +45,12 @@ defmodule RankTest do
         team: "Team"
       )
 
-    assert Rank.get(rank, :position) == :motion
+    assert Rank.Individual.get(rank, :position) == :motion
   end
 
   test "witness properties" do
     rank =
-      Rank.new(
+      Rank.Individual.new(
         name: "Competitor Name",
         position: :witness,
         score: 5,
@@ -58,13 +58,13 @@ defmodule RankTest do
         team: "Team"
       )
 
-    assert Rank.get(rank, :name) == "Competitor Name"
-    assert Rank.get(rank, :position) == :witness
+    assert Rank.Individual.get(rank, :name) == "Competitor Name"
+    assert Rank.Individual.get(rank, :position) == :witness
   end
 
   test "compare and combine ranks" do
     rank1a =
-      Rank.new(
+      Rank.Individual.new(
         name: "Competitor 1",
         position: :witness,
         score: 5,
@@ -73,7 +73,7 @@ defmodule RankTest do
       )
 
     rank1b =
-      Rank.new(
+      Rank.Individual.new(
         name: "Competitor 1",
         position: :witness,
         score: 4,
@@ -82,7 +82,7 @@ defmodule RankTest do
       )
 
     rank2 =
-      Rank.new(
+      Rank.Individual.new(
         name: "Competitor 1",
         position: :witness,
         score: 5,
@@ -90,17 +90,17 @@ defmodule RankTest do
         team: "Team"
       )
 
-    assert Rank.match?(rank1a, rank1b) == true
-    assert Rank.match?(rank1a, rank2) == false
+    assert Rank.Individual.match?(rank1a, rank1b) == true
+    assert Rank.Individual.match?(rank1a, rank2) == false
 
-    assert Rank.add(rank1a, rank1b).score == rank1a.score + rank1b.score
-    assert Rank.add(rank1a, rank2).score == rank1a.score
-    assert Rank.add(rank2, rank1b).score == rank2.score
+    assert Rank.Individual.add(rank1a, rank1b).score == rank1a.score + rank1b.score
+    assert Rank.Individual.add(rank1a, rank2).score == rank1a.score
+    assert Rank.Individual.add(rank2, rank1b).score == rank2.score
   end
 
   test "query ranks" do
     rank1a =
-      Rank.new(
+      Rank.Individual.new(
         name: "Competitor 1",
         position: :witness,
         score: 5,
@@ -109,7 +109,7 @@ defmodule RankTest do
       )
 
     rank1b =
-      Rank.new(
+      Rank.Individual.new(
         name: "Competitor 1",
         position: :witness,
         score: 4,
@@ -118,7 +118,7 @@ defmodule RankTest do
       )
 
     rank2 =
-      Rank.new(
+      Rank.Individual.new(
         name: "Competitor 1",
         position: :witness,
         score: 5,
@@ -128,17 +128,17 @@ defmodule RankTest do
 
     ranks = [rank1a, rank1b, rank2]
 
-    competitor1_filter = Rank.filter(ranks, name: "Competitor 1")
+    competitor1_filter = Rank.Individual.filter(ranks, name: "Competitor 1")
     assert Enum.count(competitor1_filter) == 3
-    multiple_filter = Rank.filter(ranks, name: "Competitor 1", side: :defense)
+    multiple_filter = Rank.Individual.filter(ranks, name: "Competitor 1", side: :defense)
     assert Enum.count(multiple_filter) == 1
-    match_filter = Rank.filter(ranks, match: rank1a)
+    match_filter = Rank.Individual.filter(ranks, match: rank1a)
     assert Enum.count(match_filter) == 2
   end
 
   test "total ranks" do
     rank2a =
-      Rank.new(
+      Rank.Individual.new(
         name: "Competitor 2",
         position: :witness,
         score: 5,
@@ -147,7 +147,7 @@ defmodule RankTest do
       )
 
     rank2b =
-      Rank.new(
+      Rank.Individual.new(
         name: "Competitor 2",
         position: :witness,
         score: 4,
@@ -156,7 +156,7 @@ defmodule RankTest do
       )
 
     rank1 =
-      Rank.new(
+      Rank.Individual.new(
         name: "Competitor 1",
         position: :witness,
         score: 5,
@@ -166,10 +166,10 @@ defmodule RankTest do
 
     ranks = [rank2a, rank2b, rank1]
 
-    totals = Rank.totals(ranks)
+    totals = Rank.Individual.totals(ranks)
     assert Enum.count(totals) == 2
 
-    assert Enum.map(totals, &Rank.format(&1, [:name, :score])) == [
+    assert Enum.map(totals, &Rank.Individual.format(&1, [:name, :score])) == [
              {"Competitor 2", 9},
              {"Competitor 1", 5}
            ]
@@ -202,9 +202,9 @@ defmodule RankTest do
         ]
       )
 
-    ranks = Rank.from_ballot(ballot)
+    ranks = Rank.Individual.from_ballot(ballot)
 
-    assert Enum.map(ranks, &Rank.format(&1, [:name, :score])) == [
+    assert Enum.map(ranks, &Rank.Individual.format(&1, [:name, :score])) == [
              {"Prosecution Attorney 1", 5},
              {"Defense Attorney 2", 4},
              {"Prosecution Attorney 3", 3},
@@ -273,14 +273,14 @@ defmodule RankTest do
         ]
       )
 
-    ranks = Rank.from_ballots([ballot1, ballot2])
+    ranks = Rank.Individual.from_ballots([ballot1, ballot2])
     assert Enum.count(ranks) == 24
-    totals = Rank.totals(ranks)
+    totals = Rank.Individual.totals(ranks)
     assert Enum.count(totals) == 16
-    assert Rank.find(totals, name: "Student Bailiff").score == 19
-    assert Rank.find(totals, name: "Student Clerk").score == 17
-    assert Rank.find(totals, name: "Prosecution Attorney 3").score == 8
-    assert Rank.find(totals, name: "Prosecution Motion Attorney").score == -2
-    assert Rank.find(totals, name: "Student Witness 4").score == 6
+    assert Rank.Individual.find(totals, name: "Student Bailiff").score == 19
+    assert Rank.Individual.find(totals, name: "Student Clerk").score == 17
+    assert Rank.Individual.find(totals, name: "Prosecution Attorney 3").score == 8
+    assert Rank.Individual.find(totals, name: "Prosecution Motion Attorney").score == -2
+    assert Rank.Individual.find(totals, name: "Student Witness 4").score == 6
   end
 end

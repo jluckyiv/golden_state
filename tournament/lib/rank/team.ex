@@ -1,4 +1,4 @@
-defmodule Ranking do
+defmodule Rank.Team do
   alias __MODULE__.Impl
 
   defdelegate ranking(ballots, team), to: Impl
