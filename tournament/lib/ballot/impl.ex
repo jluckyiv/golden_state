@@ -1,18 +1,24 @@
 defmodule Ballot.Impl do
   defstruct attorney_ranks: [],
+            bailiff: nil,
             bailiff_score: 0,
+            clerk: nil,
             clerk_score: 0,
             defense: nil,
             defense_closing_score: 0,
+            defense_motion_attorney: nil,
             defense_motion_score: 0,
             defense_total_score: 0,
             prosecution: nil,
             prosecution_closing_score: 0,
+            prosecution_motion_attorney: nil,
             prosecution_motion_score: 0,
             prosecution_total_score: 0,
             round_number: nil,
             scorer: nil,
             witness_ranks: []
+
+  def bailiff(ballot), do: ballot.bailiff
 
   def bailiff_score(%{defense: team} = ballot, team) do
     bailiff_score(ballot)
@@ -39,6 +45,8 @@ defmodule Ballot.Impl do
   end
 
   def ballots_won(_, _), do: 0.0
+
+  def clerk(ballot), do: ballot.clerk
 
   def clerk_score(%{prosecution: team} = ballot, team) do
     clerk_score(ballot)
@@ -106,6 +114,17 @@ defmodule Ballot.Impl do
   end
 
   def motion_differential(_, _), do: 0
+
+  def motion_attorney(ballot, :defense), do: ballot.defense_motion_attorney
+  def motion_attorney(ballot, :prosecution), do: ballot.prosecution_motion_attorney
+
+  def motion_attorney(%{defense: team} = ballot, team) do
+    motion_attorney(ballot, :defense)
+  end
+
+  def motion_attorney(%{prosecution: team} = ballot, team) do
+    motion_attorney(ballot, :prosecution)
+  end
 
   def motion_score(ballot, :defense), do: ballot.defense_motion_score
   def motion_score(ballot, :prosecution), do: ballot.prosecution_motion_score
@@ -186,21 +205,9 @@ defmodule Ballot.Impl do
 
   def total_score(_, _), do: 0
 
-  def attorney_ranks(ballot) do
-    format_ranks(ballot.attorney_ranks, ballot)
-  end
+  def attorney_ranks(ballot), do: ballot.attorney_ranks
 
-  def witness_ranks(ballot) do
-    format_ranks(ballot.witness_ranks, ballot)
-  end
-
-  defp format_ranks(ranks, ballot) do
-    ranks
-    |> Enum.with_index()
-    |> Enum.map(fn {{side, competitor}, i} ->
-      {get(ballot, side), competitor, 5 - i}
-    end)
-  end
+  def witness_ranks(ballot), do: ballot.witness_ranks
 
   defp win?(ballot, :defense) do
     total_score(ballot, :defense) > total_score(ballot, :prosecution)

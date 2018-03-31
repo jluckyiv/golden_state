@@ -12,8 +12,12 @@ defmodule RankingTest do
       Ballot.new(
         defense: "Team 1",
         defense_total_score: 101,
+        defense_motion_attorney: "D Motion",
+        defense_motion_score: 10,
         prosecution: "Team 2",
         prosecution_total_score: 102,
+        prosecution_motion_attorney: "P Motion",
+        prosecution_motion_score: 10,
         attorney_ranks: [
           defense: "Attorney 11",
           prosecution: "Attorney 12",
@@ -32,8 +36,12 @@ defmodule RankingTest do
       Ballot.new(
         defense: "Team 1",
         defense_total_score: 101,
+        defense_motion_attorney: "D Motion",
+        defense_motion_score: 10,
         prosecution: "Team 2",
         prosecution_total_score: 102,
+        prosecution_motion_attorney: "P Motion",
+        prosecution_motion_score: 10,
         attorney_ranks: [
           prosecution: "Attorney 12",
           defense: "Attorney 11",
@@ -51,21 +59,30 @@ defmodule RankingTest do
       )
     ]
 
-    tournament =
-      Tournament.new(
-        name: "Golden State 2018",
-        ballots: ballots
-      )
-
     assert BallotList.total(ballots, total_score: "Team 2") == 204
     assert BallotList.total(ballots, total_score: "Team 1") == 202
 
-    assert Ranking.rankings(ballots, :attorney_ranks) == [
+    attorney_ranks = Ranking.rankings(ballots, :attorney_ranks)
+
+    assert Enum.map(attorney_ranks, &{&1.team, &1.name, &1.score}) == [
              {"Team 2", "Attorney 12", 9},
              {"Team 1", "Attorney 11", 9},
              {"Team 1", "Attorney 13", 6},
              {"Team 2", "Attorney 14", 4}
            ]
+
+    witness_ranks = Ranking.rankings(ballots, :witness_ranks)
+
+    assert Enum.map(witness_ranks, &{&1.team, &1.name, &1.score}) == [
+             {"Team 1", "Witness 11", 10},
+             {"Team 2", "Witness 14", 7},
+             {"Team 1", "Witness 13", 7},
+             {"Team 2", "Witness 12", 4}
+           ]
+
+    # motion_ranks = Ranking.rankings(ballots, :motion_ranks)
+
+    # assert Enum.map(motion_ranks, &{&1.team, &1.name, &1.score}) == []
   end
 
   test "regular rankings: ballots won, point differential, distance traveled" do

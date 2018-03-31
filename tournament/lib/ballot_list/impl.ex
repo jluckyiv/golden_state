@@ -62,10 +62,18 @@ defmodule BallotList.Impl do
     |> Enum.sort()
   end
 
-  def total(ballots, fun) when fun in [:attorney_ranks, :witness_ranks] do
+  def total(ballots, :attorney_ranks) do
     ballots
-    |> Enum.map(&Ballot.get(&1, fun))
-    |> total_ranks()
+    |> Rank.from_ballots()
+    |> Rank.totals()
+    |> Rank.filter(position: :attorney)
+  end
+
+  def total(ballots, :witness_ranks) do
+    ballots
+    |> Rank.from_ballots()
+    |> Rank.totals()
+    |> Rank.filter(position: :witness)
   end
 
   def total(ballots, combined_strength: team) do

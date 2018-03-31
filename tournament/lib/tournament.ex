@@ -10,7 +10,6 @@ defmodule Tournament do
 
   ## Examples
 
-
   """
   defdelegate add_conflict(tournament, conflict), to: Impl
   defdelegate add_pairing(tournament, conflict), to: Impl

@@ -267,24 +267,18 @@ defmodule BallotListTest do
 
   test "attorney ranks", context do
     ballots = context[:ballots]
-
-    assert BallotList.total(ballots, :attorney_ranks) == [
-             {"Team 2", "Attorney 12", 9},
-             {"Team 1", "Attorney 13", 8},
-             {"Team 1", "Attorney 11", 7},
-             {"Team 2", "Attorney 14", 4}
-           ]
+    ranks = BallotList.total(ballots, :attorney_ranks)
+    assert Enum.count(ranks) == 4
+    assert Rank.find(ranks, name: "Attorney 12").score == 9
+    assert Rank.find(ranks, name: "Attorney 13").score == 8
   end
 
   test "witness ranks", context do
     ballots = context[:ballots]
-
-    assert BallotList.total(ballots, :witness_ranks) == [
-             {"Team 1", "Witness 11", 10},
-             {"Team 1", "Witness 13", 7},
-             {"Team 2", "Witness 12", 6},
-             {"Team 2", "Witness 14", 5}
-           ]
+    ranks = BallotList.total(ballots, :witness_ranks)
+    assert Enum.count(ranks) == 4
+    assert Rank.find(ranks, name: "Witness 11").score == 10
+    assert Rank.find(ranks, name: "Witness 12").score == 6
   end
 
   test "filter", context do

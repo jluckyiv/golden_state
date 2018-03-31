@@ -13,12 +13,16 @@ defmodule BallotTest do
         defense: "Defense",
         defense_total_score: 101,
         defense_closing_score: 9,
+        defense_motion_attorney: "Defense Motion Attorney",
         defense_motion_score: 8,
+        bailiff: "Bailiff",
         bailiff_score: 9,
         prosecution: "Prosecution",
         prosecution_total_score: 100,
         prosecution_closing_score: 7,
+        prosecution_motion_attorney: "Prosecution Motion Attorney",
         prosecution_motion_score: 6,
+        clerk: "Clerk",
         clerk_score: 6,
         round_number: 1,
         scorer: "Scorer",
@@ -40,23 +44,33 @@ defmodule BallotTest do
     assert Ballot.round_number(ballot) == 1
     assert Ballot.scorer(ballot) == "Scorer"
 
+    assert Ballot.get(ballot, :bailiff) == "Bailiff"
+    assert Ballot.get(ballot, :bailiff_score) == 9
+    assert Ballot.get(ballot, :clerk) == "Clerk"
+    assert Ballot.get(ballot, :clerk_score) == 6
     assert Ballot.get(ballot, :defense) == "Defense"
     assert Ballot.get(ballot, :prosecution) == "Prosecution"
     assert Ballot.get(ballot, :round_number) == 1
     assert Ballot.get(ballot, :scorer) == "Scorer"
+    assert Ballot.get(ballot, closing_score: :defense) == 9
+    assert Ballot.get(ballot, closing_score: :prosecution) == 7
+    assert Ballot.get(ballot, motion_attorney: :defense) == "Defense Motion Attorney"
+    assert Ballot.get(ballot, motion_attorney: :prosecution) == "Prosecution Motion Attorney"
+    assert Ballot.get(ballot, motion_score: :defense) == 8
+    assert Ballot.get(ballot, motion_score: :prosecution) == 6
 
     assert Ballot.get(ballot, :witness_ranks) == [
-             {"Defense", "Witness 1", 5},
-             {"Prosecution", "Witness 2", 4},
-             {"Defense", "Witness 3", 3},
-             {"Prosecution", "Witness 4", 2}
+             {:defense, "Witness 1"},
+             {:prosecution, "Witness 2"},
+             {:defense, "Witness 3"},
+             {:prosecution, "Witness 4"}
            ]
 
     assert Ballot.get(ballot, :attorney_ranks) == [
-             {"Prosecution", "Attorney 1", 5},
-             {"Defense", "Attorney 2", 4},
-             {"Prosecution", "Attorney 3", 3},
-             {"Defense", "Attorney 4", 2}
+             {:prosecution, "Attorney 1"},
+             {:defense, "Attorney 2"},
+             {:prosecution, "Attorney 3"},
+             {:defense, "Attorney 4"}
            ]
   end
 
@@ -94,13 +108,14 @@ defmodule BallotTest do
     assert Ballot.get(ballot, defense: :motion_score) == 8
     assert Ballot.get(ballot, prosecution: :motion_score) == 6
 
-    assert Ballot.get(ballot, motion_differential: "Defense") == 2
-    assert Ballot.get(ballot, motion_differential: "Prosecution") == -2
     assert Ballot.get(ballot, motion_differential: :defense) == 2
     assert Ballot.get(ballot, motion_differential: :prosecution) == -2
 
     assert Ballot.get(ballot, defense: :motion_differential) == 2
     assert Ballot.get(ballot, prosecution: :motion_differential) == -2
+
+    assert Ballot.get(ballot, motion_differential: "Defense") == 2
+    assert Ballot.get(ballot, motion_differential: "Prosecution") == -2
   end
 
   test "ballot bailiff and clerk scores", context do
