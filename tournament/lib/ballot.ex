@@ -10,6 +10,5 @@ defmodule Ballot do
   defdelegate prosecution?(ballot, team), to: Impl
   defdelegate round_number(ballot), to: Impl
   defdelegate round_number?(ballot, round_number), to: Impl
-  defdelegate scorer(ballot), to: Impl
   defdelegate team?(ballot, team), to: Impl
 end

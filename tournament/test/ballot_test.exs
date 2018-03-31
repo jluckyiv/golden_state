@@ -42,7 +42,6 @@ defmodule BallotTest do
     assert Ballot.defense(ballot) == "Defense"
     assert Ballot.prosecution(ballot) == "Prosecution"
     assert Ballot.round_number(ballot) == 1
-    assert Ballot.scorer(ballot) == "Scorer"
 
     assert Ballot.get(ballot, :bailiff) == "Bailiff"
     assert Ballot.get(ballot, :bailiff_score) == 9

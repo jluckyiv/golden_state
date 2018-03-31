@@ -64,16 +64,16 @@ defmodule BallotList.Impl do
 
   def total(ballots, :attorney_ranks) do
     ballots
-    |> Rank.Individual.from_ballots()
-    |> Rank.Individual.totals()
-    |> Rank.Individual.filter(position: :attorney)
+    |> Rank.from_ballots()
+    |> Rank.totals()
+    |> Rank.filter(position: :attorney)
   end
 
   def total(ballots, :witness_ranks) do
     ballots
-    |> Rank.Individual.from_ballots()
-    |> Rank.Individual.totals()
-    |> Rank.Individual.filter(position: :witness)
+    |> Rank.from_ballots()
+    |> Rank.totals()
+    |> Rank.filter(position: :witness)
   end
 
   def total(ballots, combined_strength: team) do

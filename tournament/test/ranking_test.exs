@@ -17,7 +17,7 @@ defmodule RankingTest do
         prosecution: "Team 2",
         prosecution_total_score: 102,
         prosecution_motion_attorney: "P Motion",
-        prosecution_motion_score: 10,
+        prosecution_motion_score: 9,
         attorney_ranks: [
           defense: "Attorney 11",
           prosecution: "Attorney 12",
@@ -41,7 +41,7 @@ defmodule RankingTest do
         prosecution: "Team 2",
         prosecution_total_score: 102,
         prosecution_motion_attorney: "P Motion",
-        prosecution_motion_score: 10,
+        prosecution_motion_score: 9,
         attorney_ranks: [
           prosecution: "Attorney 12",
           defense: "Attorney 11",
@@ -62,7 +62,7 @@ defmodule RankingTest do
     assert BallotList.total(ballots, total_score: "Team 2") == 204
     assert BallotList.total(ballots, total_score: "Team 1") == 202
 
-    attorney_ranks = Rank.Team.rankings(ballots, :attorney_ranks)
+    attorney_ranks = Ranking.Individual.rankings(ballots, :attorney_ranks)
 
     assert Enum.map(attorney_ranks, &{&1.team, &1.name, &1.score}) == [
              {"Team 2", "Attorney 12", 9},
@@ -71,7 +71,7 @@ defmodule RankingTest do
              {"Team 2", "Attorney 14", 4}
            ]
 
-    witness_ranks = Rank.Team.rankings(ballots, :witness_ranks)
+    witness_ranks = Ranking.Individual.rankings(ballots, position: :witness)
 
     assert Enum.map(witness_ranks, &{&1.team, &1.name, &1.score}) == [
              {"Team 1", "Witness 11", 10},
@@ -80,9 +80,12 @@ defmodule RankingTest do
              {"Team 2", "Witness 12", 4}
            ]
 
-    # motion_ranks = Rank.Individual.rankings(ballots, :motion_ranks)
+    motion_ranks = Ranking.Individual.rankings(ballots, ranks: :motion)
 
-    # assert Enum.map(motion_ranks, &{&1.team, &1.name, &1.score}) == []
+    assert Enum.map(motion_ranks, &{&1.team, &1.name, &1.score}) == [
+             {"Team 1", "D Motion", 2},
+             {"Team 2", "P Motion", -2}
+           ]
   end
 
   test "regular rankings: ballots won, point differential, distance traveled" do
@@ -202,7 +205,7 @@ defmodule RankingTest do
     assert BallotList.total(r1_ballots, point_differential: university) == -14
     assert BallotList.total(r1_ballots, point_differential: tam) == -15
 
-    round1_rankings = Rank.Team.rankings(r1_ballots)
+    round1_rankings = Ranking.Team.rankings(r1_ballots)
 
     assert round1_rankings == [
              venture,
@@ -215,14 +218,14 @@ defmodule RankingTest do
              tam
            ]
 
-    assert Rank.Team.ranking(r1_ballots, venture) == 1
-    assert Rank.Team.ranking(r1_ballots, redlands) == 2
-    assert Rank.Team.ranking(r1_ballots, trinity) == 3
-    assert Rank.Team.ranking(r1_ballots, shasta) == 4
-    assert Rank.Team.ranking(r1_ballots, carmel) == 5
-    assert Rank.Team.ranking(r1_ballots, king) == 6
-    assert Rank.Team.ranking(r1_ballots, university) == 7
-    assert Rank.Team.ranking(r1_ballots, tam) == 8
+    assert Ranking.Team.ranking(r1_ballots, venture) == 1
+    assert Ranking.Team.ranking(r1_ballots, redlands) == 2
+    assert Ranking.Team.ranking(r1_ballots, trinity) == 3
+    assert Ranking.Team.ranking(r1_ballots, shasta) == 4
+    assert Ranking.Team.ranking(r1_ballots, carmel) == 5
+    assert Ranking.Team.ranking(r1_ballots, king) == 6
+    assert Ranking.Team.ranking(r1_ballots, university) == 7
+    assert Ranking.Team.ranking(r1_ballots, tam) == 8
 
     round2 = Tournament.seed_round2(round1_rankings, round1)
 
@@ -302,7 +305,7 @@ defmodule RankingTest do
 
     r1_r2_ballots = r1_ballots ++ round2_ballots
 
-    round2_rankings = Rank.Team.rankings(r1_r2_ballots)
+    round2_rankings = Ranking.Team.rankings(r1_r2_ballots)
 
     assert BallotList.total(r1_r2_ballots, ballots_won: redlands) == 3.0
     assert BallotList.total(r1_r2_ballots, ballots_won: venture) == 3.0
@@ -430,7 +433,7 @@ defmodule RankingTest do
     # assert BallotList.point_differential(r1_r2_r3_ballots, trinity) == -18
     # assert BallotList.point_differential(r1_r2_r3_ballots, king) == -40
 
-    round3_rankings = Rank.Team.rankings(r1_r2_r3_ballots)
+    round3_rankings = Ranking.Team.rankings(r1_r2_r3_ballots)
 
     assert round3_rankings == [
              venture,
@@ -522,9 +525,9 @@ defmodule RankingTest do
 
     r1_r2_r3_r4_ballots = r1_ballots ++ round2_ballots ++ round3_ballots ++ round4_ballots
 
-    # round4_rankings = Rank.Team.final_rankings(r1_r2_r3_r4_ballots)
+    # round4_rankings = Ranking.Team.final_rankings(r1_r2_r3_r4_ballots)
 
-    final_rankings = Rank.Team.final_rankings(r1_r2_r3_r4_ballots)
+    final_rankings = Ranking.Team.final_rankings(r1_r2_r3_r4_ballots)
 
     assert final_rankings == [
              redlands,
@@ -537,14 +540,14 @@ defmodule RankingTest do
              university
            ]
 
-    assert Rank.Team.final_ranking(r1_r2_r3_r4_ballots, redlands) == 1
-    assert Rank.Team.final_ranking(r1_r2_r3_r4_ballots, venture) == 2
-    assert Rank.Team.final_ranking(r1_r2_r3_r4_ballots, tam) == 3
-    assert Rank.Team.final_ranking(r1_r2_r3_r4_ballots, shasta) == 4
-    assert Rank.Team.final_ranking(r1_r2_r3_r4_ballots, king) == 5
-    assert Rank.Team.final_ranking(r1_r2_r3_r4_ballots, carmel) == 6
-    assert Rank.Team.final_ranking(r1_r2_r3_r4_ballots, trinity) == 7
-    assert Rank.Team.final_ranking(r1_r2_r3_r4_ballots, university) == 8
+    assert Ranking.Team.final_ranking(r1_r2_r3_r4_ballots, redlands) == 1
+    assert Ranking.Team.final_ranking(r1_r2_r3_r4_ballots, venture) == 2
+    assert Ranking.Team.final_ranking(r1_r2_r3_r4_ballots, tam) == 3
+    assert Ranking.Team.final_ranking(r1_r2_r3_r4_ballots, shasta) == 4
+    assert Ranking.Team.final_ranking(r1_r2_r3_r4_ballots, king) == 5
+    assert Ranking.Team.final_ranking(r1_r2_r3_r4_ballots, carmel) == 6
+    assert Ranking.Team.final_ranking(r1_r2_r3_r4_ballots, trinity) == 7
+    assert Ranking.Team.final_ranking(r1_r2_r3_r4_ballots, university) == 8
 
     # Championship pairing
     ## total ballots, head to head, combined_strength, point_differential

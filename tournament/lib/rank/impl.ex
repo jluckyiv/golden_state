@@ -1,13 +1,5 @@
-defmodule Rank.Individual.Impl do
+defmodule Rank.Impl do
   defstruct name: nil, position: nil, score: 0, side: nil, team: nil
-
-  def add(rank1, rank2) do
-    if __MODULE__.match?(rank1, rank2) do
-      %{rank1 | score: rank1.score + rank2.score}
-    else
-      rank1
-    end
-  end
 
   def find(ranks, opts), do: List.first(filter(ranks, opts))
   def filter(ranks, []), do: ranks
@@ -40,14 +32,19 @@ defmodule Rank.Individual.Impl do
 
   def get(rank, property), do: apply(__MODULE__, property, [rank])
   def identity(rank), do: map_without_score(rank)
+  def match?(rank1, rank2), do: identity(rank1) == identity(rank2)
   def name(rank), do: rank.name
   def new(opts), do: struct(__MODULE__, opts)
   def position(rank), do: rank.position
   def score(rank), do: rank.score
   def side(rank), do: rank.side
 
-  def match?(rank1, rank2) do
-    identity(rank1) == identity(rank2)
+  def rankings(ballots, opts \\ []) do
+    ballots
+    |> from_ballots()
+    |> filter(List.wrap(opts))
+    |> totals()
+    |> sort_with_tiebreakers(ballots, :final_ranking)
   end
 
   def team(rank), do: rank.team
@@ -157,6 +154,30 @@ defmodule Rank.Individual.Impl do
     |> do_format(rank, tail)
   end
 
+  defp do_filter(ranks, {:ranks, value}) do
+    do_filter(ranks, {:position, value})
+  end
+
+  defp do_filter(ranks, :attorney_ranks) do
+    do_filter(ranks, {:position, :attorney})
+  end
+
+  defp do_filter(ranks, :bailiff_ranks) do
+    do_filter(ranks, {:position, :bailiff})
+  end
+
+  defp do_filter(ranks, :clerk_ranks) do
+    do_filter(ranks, {:position, :clerk})
+  end
+
+  defp do_filter(ranks, :motion_ranks) do
+    do_filter(ranks, {:position, :motion})
+  end
+
+  defp do_filter(ranks, :witness_ranks) do
+    do_filter(ranks, {:position, :witness})
+  end
+
   defp do_filter(ranks, {:match, %__MODULE__{} = rank}) do
     do_filter(ranks, {:identity, identity(rank)})
   end
@@ -182,4 +203,26 @@ defmodule Rank.Individual.Impl do
   defp sort_by_score(ranks) do
     Enum.sort_by(ranks, &score/1, &>=/2)
   end
+
+  defp sort_with_tiebreakers(elements, tiebreaker_data, tiebreakers) do
+    Enum.sort(
+      elements,
+      &do_sort_with_tiebreakers({&1, &2}, tiebreaker_data, tiebreakers)
+    )
+  end
+
+  defp do_sort_with_tiebreakers({rank1, rank2}, ballots, :final_ranking) do
+    cond do
+      rank1.score > rank2.score ->
+        true
+
+      rank1.score < rank2.score ->
+        false
+
+      true ->
+        final_ranking(ballots, rank1.team) <= final_ranking(ballots, rank2.team)
+    end
+  end
+
+  defp final_ranking(ballots, team), do: Ranking.Team.final_ranking(ballots, team)
 end

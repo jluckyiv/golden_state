@@ -1,14 +1,8 @@
-defmodule Rank.Team.Impl do
+defmodule Ranking.Team.Impl do
   def ranking(ballots, team) do
     ballots
     |> rankings()
-    |> team_rank(team)
-  end
-
-  def rankings(ballots, opts) do
-    ballots
-    |> total(opts)
-    |> sort_with_tiebreakers(ballots, :final_ranking)
+    |> rank(team)
   end
 
   def rankings(ballots) do
@@ -24,7 +18,7 @@ defmodule Rank.Team.Impl do
   def final_ranking(ballots, team) do
     ballots
     |> final_rankings()
-    |> team_rank(team)
+    |> rank(team)
   end
 
   def final_rankings(ballots) do
@@ -44,6 +38,8 @@ defmodule Rank.Team.Impl do
 
   defp distance_traveled(team), do: Team.distance_traveled(team)
 
+  defp filter_ballots(ballots, filter), do: BallotList.filter(ballots, filter)
+
   defp pairing_totals(_ballots, {team1, team2}, :distance_traveled) do
     {distance_traveled(team1), distance_traveled(team2)}
   end
@@ -55,34 +51,16 @@ defmodule Rank.Team.Impl do
   end
 
   defp pairing_totals(ballots, {team1, team2}, fun) do
-    {total(ballots, [{fun, team1}]), total(ballots, [{fun, team2}])}
+    {ballot_total(ballots, [{fun, team1}]), ballot_total(ballots, [{fun, team2}])}
   end
 
-  defp total(ballots, opts), do: BallotList.total(ballots, opts)
-
-  defp filter_ballots(ballots, filter) do
-    BallotList.filter(ballots, filter)
-  end
+  defp ballot_total(ballots, opts), do: BallotList.total(ballots, opts)
 
   defp sort_with_tiebreakers(elements, tiebreaker_data, tiebreakers) do
     Enum.sort(
       elements,
       &do_sort_with_tiebreakers({&1, &2}, tiebreaker_data, tiebreakers)
     )
-  end
-
-  # only for individual ranks
-  defp do_sort_with_tiebreakers({rank1, rank2}, ballots, :final_ranking) do
-    cond do
-      rank1.score > rank2.score ->
-        true
-
-      rank1.score < rank2.score ->
-        false
-
-      true ->
-        final_ranking(ballots, rank1.team) <= final_ranking(ballots, rank2.team)
-    end
   end
 
   defp do_sort_with_tiebreakers(pairing, ballots, [head | tail]) do
@@ -97,7 +75,7 @@ defmodule Rank.Team.Impl do
 
   defp do_sort_with_tiebreakers(_elements, _tiebreaker_data, []), do: true
 
-  defp team_rank(rankings, team) do
+  defp rank(rankings, team) do
     rankings
     |> Enum.find_index(&(&1 == team))
     |> Kernel.+(1)
