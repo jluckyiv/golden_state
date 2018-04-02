@@ -349,12 +349,11 @@ defmodule TournamentTest do
               }, 8}
            ]
 
-    # TODO fix {venture, redlands} conflict
     round3 = Tournament.seed(tournament, round_number: 3)
 
     assert round3 == [
-             {venture, redlands},
-             {shasta, carmel},
+             {shasta, redlands},
+             {venture, carmel},
              {trinity, tam},
              {king, university}
            ]
@@ -498,12 +497,11 @@ defmodule TournamentTest do
 
     round4 = Tournament.seed(tournament, round_number: 4)
 
-    # fix [redlands, venture] with redlands <> carmel
     assert round4 == [
-             {redlands, venture},
+             {university, venture},
              {tam, shasta},
              {carmel, trinity},
-             {university, king}
+             {redlands, king}
            ]
 
     tournament =
@@ -512,8 +510,8 @@ defmodule TournamentTest do
       |> Tournament.add_ballot(
         Ballot.new(
           scorer: "Delmare",
-          prosecution: carmel,
-          defense: shasta,
+          prosecution: university,
+          defense: venture,
           round_number: 4,
           prosecution_total_score: 111,
           defense_total_score: 110
@@ -522,8 +520,8 @@ defmodule TournamentTest do
       |> Tournament.add_ballot(
         Ballot.new(
           scorer: "Klein",
-          prosecution: carmel,
-          defense: shasta,
+          prosecution: university,
+          defense: venture,
           round_number: 4,
           prosecution_total_score: 112,
           defense_total_score: 113
@@ -533,7 +531,7 @@ defmodule TournamentTest do
         Ballot.new(
           scorer: "Near",
           prosecution: tam,
-          defense: venture,
+          defense: shasta,
           round_number: 4,
           prosecution_total_score: 115,
           defense_total_score: 109
@@ -543,7 +541,7 @@ defmodule TournamentTest do
         Ballot.new(
           scorer: "Junker",
           prosecution: tam,
-          defense: venture,
+          defense: shasta,
           round_number: 4,
           prosecution_total_score: 109,
           defense_total_score: 109
@@ -552,7 +550,7 @@ defmodule TournamentTest do
       |> Tournament.add_ballot(
         Ballot.new(
           scorer: "Barker",
-          prosecution: redlands,
+          prosecution: carmel,
           defense: trinity,
           round_number: 4,
           prosecution_total_score: 105,
@@ -562,7 +560,7 @@ defmodule TournamentTest do
       |> Tournament.add_ballot(
         Ballot.new(
           scorer: "Knaack",
-          prosecution: redlands,
+          prosecution: carmel,
           defense: trinity,
           round_number: 4,
           prosecution_total_score: 113,
@@ -572,20 +570,20 @@ defmodule TournamentTest do
       |> Tournament.add_ballot(
         Ballot.new(
           scorer: "Talmachoff",
-          prosecution: university,
+          prosecution: redlands,
           defense: king,
           round_number: 4,
-          prosecution_total_score: 96,
+          prosecution_total_score: 108,
           defense_total_score: 107
         )
       )
       |> Tournament.add_ballot(
         Ballot.new(
           scorer: "Gaughan",
-          prosecution: university,
+          prosecution: redlands,
           defense: king,
           round_number: 4,
-          prosecution_total_score: 84,
+          prosecution_total_score: 101,
           defense_total_score: 100
         )
       )
@@ -599,13 +597,13 @@ defmodule TournamentTest do
                 ballots_won: 6.0,
                 distance_traveled: 20,
                 name: "Redlands",
-                point_differential: 39
+                point_differential: 33
               }, 1},
              {%{
-                ballots_won: 5.5,
+                ballots_won: 6.0,
                 distance_traveled: 400,
                 name: "Venture",
-                point_differential: 9
+                point_differential: 15
               }, 2},
              {%{
                 ballots_won: 5.5,
@@ -614,22 +612,22 @@ defmodule TournamentTest do
                 point_differential: 23
               }, 3},
              {%{
-                ballots_won: 4.5,
+                ballots_won: 4.0,
                 distance_traveled: 600,
                 name: "Shasta",
-                point_differential: 2
+                point_differential: -4
               }, 4},
              {%{
-                ballots_won: 3.5,
-                distance_traveled: 0,
-                name: "King",
-                point_differential: -13
+                ballots_won: 4.0,
+                distance_traveled: 380,
+                name: "Carmel",
+                point_differential: 7
               }, 5},
              {%{
                 ballots_won: 3.0,
-                distance_traveled: 380,
-                name: "Carmel",
-                point_differential: -1
+                distance_traveled: 40,
+                name: "University",
+                point_differential: -6
               }, 6},
              {%{
                 ballots_won: 2.0,
@@ -638,15 +636,16 @@ defmodule TournamentTest do
                 point_differential: -26
               }, 7},
              {%{
-                ballots_won: 2.0,
-                distance_traveled: 40,
-                name: "University",
-                point_differential: -33
+                ballots_won: 1.5,
+                distance_traveled: 0,
+                name: "King",
+                point_differential: -42
               }, 8}
            ]
 
-    # Championship pairing
-    ## total ballots, head to head, combined_strength, point_differential
-    ## head-to-head: ballots, point_differential, closing score, motion score
+    assert Tournament.championship_pairing(tournament) == [
+             %Team.Impl{distance_traveled: 20, name: "Redlands"},
+             %Team.Impl{distance_traveled: 400, name: "Venture"}
+           ]
   end
 end

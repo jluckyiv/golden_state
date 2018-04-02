@@ -44,6 +44,12 @@ defmodule Tournament.Impl do
 
   def ballots(tournament), do: tournament.ballots
 
+  def championship_pairing(tournament) do
+    tournament
+    |> final_rankings()
+    |> Enum.take(2)
+  end
+
   def pairings(tournament, opts \\ [])
 
   def pairings(tournament, opts) do
@@ -57,20 +63,38 @@ defmodule Tournament.Impl do
     |> Enum.map(&List.to_tuple/1)
   end
 
+  def resolve_conflicts(pairings, tournament, round_number) do
+    conflicts =
+      (tournament.conflicts ++ tournament.pairings)
+      |> Enum.map(&{&1.prosecution, &1.defense})
+
+    rankings = team_rankings(tournament, round_number: round_number)
+
+    Tournament.Conflict.resolve_conflicts(conflicts, pairings, rankings)
+  end
+
   def seed(tournament, round_number: 1) do
-    seed_round1(tournament)
+    tournament
+    |> seed_round1()
+    |> resolve_conflicts(tournament, 1)
   end
 
   def seed(tournament, round_number: 2) do
-    seed_round2(tournament)
+    tournament
+    |> seed_round2()
+    |> resolve_conflicts(tournament, 2)
   end
 
   def seed(tournament, round_number: 3) do
-    seed_round3(tournament)
+    tournament
+    |> seed_round3()
+    |> resolve_conflicts(tournament, 3)
   end
 
   def seed(tournament, round_number: 4) do
-    seed_round4(tournament)
+    tournament
+    |> seed_round4()
+    |> resolve_conflicts(tournament, 4)
   end
 
   def ranked_teams(tournament, round_number: 4) do
@@ -98,6 +122,8 @@ defmodule Tournament.Impl do
     |> ballots(round_numbers: 1..round_number)
     |> Ranking.Team.rankings()
   end
+
+  def final_rankings(tournament), do: team_rankings(tournament, round_number: 4)
 
   defp map_ranking(tournament, team) do
     %{

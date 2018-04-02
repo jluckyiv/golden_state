@@ -19,11 +19,13 @@ defmodule Tournament do
   defdelegate add_teams(tournament, teams), to: Impl
   defdelegate ballots(tournament), to: Impl
   defdelegate ballots(tournament, opts), to: Impl
-  defdelegate start(opts), to: Impl
+  defdelegate championship_pairing(tournament), to: Impl
   defdelegate pairings(tournament, opts), to: Impl
   defdelegate random_pairings(tournament), to: Impl
   defdelegate ranked_teams(tournament, opts), to: Impl
+  defdelegate resolve_conflicts(pairings, tournament, round_number), to: Impl
   defdelegate seed(tournament, opts), to: Impl
+  defdelegate start(opts), to: Impl
   defdelegate team_rankings(tournament, opts), to: Impl
   defdelegate with_rankings(rankings), to: Impl
 end

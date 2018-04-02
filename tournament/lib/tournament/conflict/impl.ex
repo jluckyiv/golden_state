@@ -1,4 +1,8 @@
 defmodule Tournament.Conflict.Impl do
+  def conflict?(conflicts, pairing) when is_map(pairing) do
+    conflict?(conflicts, {pairing.prosecution, pairing.defense})
+  end
+
   def conflict?(conflicts, {prosecution, defense}) do
     Enum.any?(conflicts, &(&1 == {prosecution, defense})) or
       Enum.any?(conflicts, &(&1 == {defense, prosecution}))
@@ -75,14 +79,16 @@ defmodule Tournament.Conflict.Impl do
     sub_index = index - distance
 
     if sub_index < 0 do
-      IO.puts("Cannot move #{team} up #{distance}.")
+      IO.puts("Cannot move #{team.name} up #{distance}.")
       teams
     else
-      IO.puts("Moving #{team} up #{distance}.")
-      list = List.delete_at(teams, index)
-      {sub, list} = List.pop_at(list, index - distance)
-      list = List.insert_at(list, index - distance, team)
-      List.insert_at(list, index, sub)
+      IO.puts("Moving #{team.name} up #{distance}.")
+
+      teams
+      |> List.delete_at(index)
+      |> List.pop_at(sub_index)
+      |> (fn {sub, list} -> {sub, List.insert_at(list, sub_index, team)} end).()
+      |> (fn {sub, list} -> List.insert_at(list, index, sub) end).()
     end
   end
 
@@ -91,14 +97,16 @@ defmodule Tournament.Conflict.Impl do
     sub_index = index + distance
 
     if sub_index >= length(teams) do
-      IO.puts("Cannot move #{team} down #{distance}.")
+      IO.puts("Cannot move #{team.name} down #{distance}.")
       teams
     else
-      IO.puts("Moving #{team} down #{distance}.")
-      {sub, list} = List.pop_at(teams, index + distance)
-      list = List.delete_at(list, index)
-      list = List.insert_at(list, index, sub)
-      List.insert_at(list, index + distance, team)
+      IO.puts("Moving #{team.name} down #{distance}.")
+
+      teams
+      |> List.pop_at(sub_index)
+      |> (fn {sub, list} -> {sub, List.delete_at(list, index)} end).()
+      |> (fn {sub, list} -> List.insert_at(list, index, sub) end).()
+      |> List.insert_at(sub_index, team)
     end
   end
 
@@ -167,7 +175,6 @@ defmodule Tournament.Conflict.Impl do
   end
 
   defp zip_sides([prosecution_teams, defense_teams]) do
-    [prosecution_teams, defense_teams]
-    |> Enum.zip()
+    Enum.zip([prosecution_teams, defense_teams])
   end
 end

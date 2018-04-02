@@ -4,133 +4,167 @@ defmodule ConflictTest do
   alias Tournament.Conflict
 
   test "step 1 conflict resolution: move lower-ranked team down 1" do
-    conflicts = [{"Trinity A", "Trinity B"}]
+    carmel = %{name: "Carmel"}
+    king = %{name: "King"}
+    menlo = %{name: "Menlo"}
+    redlands = %{name: "Redlands"}
+    shasta = %{name: "Shasta"}
+    tam = %{name: "Tam"}
+    trinity_a = %{name: "Trinity A"}
+    trinity_b = %{name: "Trinity B"}
+
+    conflicts = [{trinity_a, trinity_b}]
 
     rankings = [
-      "King",
-      "Shasta",
-      "Trinity A",
-      "Trinity B",
-      "Tam",
-      "Redlands",
-      "Carmel",
-      "Menlo"
+      king,
+      shasta,
+      trinity_a,
+      trinity_b,
+      tam,
+      redlands,
+      carmel,
+      menlo
     ]
 
     pairings = [
-      {"King", "Shasta"},
-      {"Trinity A", "Trinity B"},
-      {"Tam", "Redlands"},
-      {"Carmel", "Menlo"}
+      {king, shasta},
+      {trinity_a, trinity_b},
+      {tam, redlands},
+      {carmel, menlo}
     ]
 
-    assert Conflict.conflict?(conflicts, {"Trinity A", "Trinity B"})
-    assert Conflict.conflict?(conflicts, {"Trinity B", "Trinity A"})
+    assert Conflict.conflict?(conflicts, {trinity_a, trinity_b})
+    assert Conflict.conflict?(conflicts, {trinity_b, trinity_a})
     assert Conflict.conflicts?(conflicts, pairings) == true
 
     assert Conflict.resolve_conflicts(conflicts, pairings, rankings) ==
              [
-               {"King", "Shasta"},
-               {"Trinity A", "Redlands"},
-               {"Tam", "Trinity B"},
-               {"Carmel", "Menlo"}
+               {king, shasta},
+               {trinity_a, redlands},
+               {tam, trinity_b},
+               {carmel, menlo}
              ]
   end
 
   test "step 3 conflict resolution: move upper-ranked team up 1" do
-    conflicts = [{"Trinity A", "Trinity B"}, {"Redlands", "Trinity A"}]
+    carmel = %{name: "Carmel"}
+    king = %{name: "King"}
+    menlo = %{name: "Menlo"}
+    redlands = %{name: "Redlands"}
+    shasta = %{name: "Shasta"}
+    tam = %{name: "Tam"}
+    trinity_a = %{name: "Trinity A"}
+    trinity_b = %{name: "Trinity B"}
+    conflicts = [{trinity_a, trinity_b}, {redlands, trinity_a}]
 
     rankings = [
-      "King",
-      "Shasta",
-      "Trinity A",
-      "Trinity B",
-      "Tam",
-      "Redlands",
-      "Carmel",
-      "Menlo"
+      king,
+      shasta,
+      trinity_a,
+      trinity_b,
+      tam,
+      redlands,
+      carmel,
+      menlo
     ]
 
     pairings = [
-      {"King", "Shasta"},
-      {"Trinity A", "Trinity B"},
-      {"Tam", "Redlands"},
-      {"Carmel", "Menlo"}
+      {king, shasta},
+      {trinity_a, trinity_b},
+      {tam, redlands},
+      {carmel, menlo}
     ]
 
     assert Conflict.resolve_conflicts(conflicts, pairings, rankings) ==
              [
-               {"Trinity A", "Shasta"},
-               {"King", "Trinity B"},
-               {"Tam", "Redlands"},
-               {"Carmel", "Menlo"}
+               {trinity_a, shasta},
+               {king, trinity_b},
+               {tam, redlands},
+               {carmel, menlo}
              ]
   end
 
   test "step 5 conflict resolution: move upper-ranked team down 2" do
-    conflicts = [{"Trinity A", "Trinity B"}]
-    conflicts = [{"King", "Trinity A"} | conflicts]
-    conflicts = [{"Menlo", "Trinity B"} | conflicts]
+    carmel = %{name: "Carmel"}
+    king = %{name: "King"}
+    menlo = %{name: "Menlo"}
+    redlands = %{name: "Redlands"}
+    shasta = %{name: "Shasta"}
+    tam = %{name: "Tam"}
+    trinity_a = %{name: "Trinity A"}
+    trinity_b = %{name: "Trinity B"}
+    conflicts = [{trinity_a, trinity_b}]
+    conflicts = [{king, trinity_a} | conflicts]
+    conflicts = [{menlo, trinity_b} | conflicts]
 
     pairings = [
-      {"Trinity A", "Trinity B"},
-      {"Menlo", "King"},
-      {"Tam", "Shasta"},
-      {"Redlands", "Carmel"}
+      {trinity_a, trinity_b},
+      {menlo, king},
+      {tam, shasta},
+      {redlands, carmel}
     ]
 
     rankings = [
-      "Trinity A",
-      "Trinity B",
-      "King",
-      "Menlo",
-      "Tam",
-      "Shasta",
-      "Carmel",
-      "Redlands"
+      trinity_a,
+      trinity_b,
+      king,
+      menlo,
+      tam,
+      shasta,
+      carmel,
+      redlands
     ]
 
     assert Conflict.resolve_conflicts(conflicts, pairings, rankings) ==
              [
-               {"Trinity A", "Shasta"},
-               {"Menlo", "King"},
-               {"Tam", "Trinity B"},
-               {"Redlands", "Carmel"}
+               {trinity_a, shasta},
+               {menlo, king},
+               {tam, trinity_b},
+               {redlands, carmel}
              ]
   end
 
   test "multiple conflicts" do
+    carmel = %{name: "Carmel"}
+    king = %{name: "King"}
+    menlo = %{name: "Menlo"}
+    redlands = %{name: "Redlands"}
+    shasta = %{name: "Shasta"}
+    tam = %{name: "Tam"}
+    trinity_a = %{name: "Trinity A"}
+    trinity_b = %{name: "Trinity B"}
+
     conflicts = [
-      {"Trinity A", "King"},
-      {"Redlands", "Trinity B"},
-      {"Trinity A", "Trinity B"},
-      {"Carmel", "Menlo"},
-      {"Tam", "Shasta"}
+      {trinity_a, king},
+      {redlands, trinity_b},
+      {trinity_a, trinity_b},
+      {carmel, menlo},
+      {tam, shasta}
     ]
 
     pairings = [
-      {"Trinity A", "King"},
-      {"Redlands", "Trinity B"},
-      {"Menlo", "Carmel"},
-      {"Tam", "Shasta"}
+      {trinity_a, king},
+      {redlands, trinity_b},
+      {menlo, carmel},
+      {tam, shasta}
     ]
 
     rankings = [
-      "Trinity A",
-      "Trinity B",
-      "King",
-      "Menlo",
-      "Tam",
-      "Shasta",
-      "Carmel",
-      "Redlands"
+      trinity_a,
+      trinity_b,
+      king,
+      menlo,
+      tam,
+      shasta,
+      carmel,
+      redlands
     ]
 
     assert Conflict.resolve_conflicts(conflicts, pairings, rankings) == [
-             {"Trinity A", "Carmel"},
-             {"Menlo", "Trinity B"},
-             {"Tam", "King"},
-             {"Redlands", "Shasta"}
+             {trinity_a, carmel},
+             {menlo, trinity_b},
+             {tam, king},
+             {redlands, shasta}
            ]
   end
 end
