@@ -3,37 +3,8 @@ defmodule ConflictTest do
 
   alias Tournament.Conflict
 
-  test "conflicts" do
-    carmel = "Carmel"
-    king = "King"
-    menlo = "Menlo"
-    redlands = "Redlands"
-    shasta = "Shasta"
-    tam = "Tam"
-    trinity_a = "Trinity A"
-    trinity_b = "Trinity B"
-
-    teams = [
-      carmel,
-      king,
-      menlo,
-      redlands,
-      shasta,
-      tam,
-      trinity_a,
-      trinity_b
-    ]
-
-    tournament =
-      [name: "Golden State 2018"]
-      |> Tournament.new()
-      |> Tournament.add_conflict({trinity_a, trinity_b})
-
-    # |> Tournament.add_pairing({carmel, king})
-    # |> Tournament.add_pairing({tam, menlo})
-
-    :rand.seed(:exsplus, {106, 102, 103})
-    round1 = Tournament.seed_round1(teams)
+  test "step 1 conflict resolution: move lower-ranked team down 1" do
+    conflicts = [{"Trinity A", "Trinity B"}]
 
     rankings = [
       "King",
@@ -46,42 +17,62 @@ defmodule ConflictTest do
       "Menlo"
     ]
 
-    assert round1 == [
-             {"King", "Shasta"},
-             {"Trinity A", "Trinity B"},
-             {"Tam", "Redlands"},
-             {"Carmel", "Menlo"}
-           ]
+    pairings = [
+      {"King", "Shasta"},
+      {"Trinity A", "Trinity B"},
+      {"Tam", "Redlands"},
+      {"Carmel", "Menlo"}
+    ]
 
-    # step 1 conflict resolution
-    assert Conflict.conflicts?(tournament, round1) == true
+    assert Conflict.conflict?(conflicts, {"Trinity A", "Trinity B"})
+    assert Conflict.conflict?(conflicts, {"Trinity B", "Trinity A"})
+    assert Conflict.conflicts?(conflicts, pairings) == true
 
-    assert Conflict.resolve_conflicts(tournament, rankings, round1) == [
-             {"King", "Shasta"},
-             {"Trinity A", "Redlands"},
-             {"Tam", "Trinity B"},
-             {"Carmel", "Menlo"}
-           ]
+    assert Conflict.resolve_conflicts(conflicts, pairings, rankings) ==
+             [
+               {"King", "Shasta"},
+               {"Trinity A", "Redlands"},
+               {"Tam", "Trinity B"},
+               {"Carmel", "Menlo"}
+             ]
+  end
 
-    # step 2 conflict resolution doesn't resolve conflicts
-    # step 3 conflict resolution 
-    tournament = Tournament.add_pairing(tournament, {"Redlands", "Trinity A"})
-    assert Conflict.conflicts?(tournament, round1) == true
+  test "step 3 conflict resolution: move upper-ranked team up 1" do
+    conflicts = [{"Trinity A", "Trinity B"}, {"Redlands", "Trinity A"}]
 
-    assert Conflict.resolve_conflicts(tournament, rankings, round1) == [
-             {"Trinity A", "Shasta"},
-             {"King", "Trinity B"},
-             {"Tam", "Redlands"},
-             {"Carmel", "Menlo"}
-           ]
+    rankings = [
+      "King",
+      "Shasta",
+      "Trinity A",
+      "Trinity B",
+      "Tam",
+      "Redlands",
+      "Carmel",
+      "Menlo"
+    ]
 
-    # step 4 conflict resolution doesn't resolve conflicts
-    # step 5 conflict resolution
-    tournament = Tournament.add_pairing(tournament, {"King", "Trinity A"})
-    tournament = Tournament.add_pairing(tournament, {"Menlo", "Trinity B"})
-    assert Conflict.conflicts?(tournament, round1) == true
+    pairings = [
+      {"King", "Shasta"},
+      {"Trinity A", "Trinity B"},
+      {"Tam", "Redlands"},
+      {"Carmel", "Menlo"}
+    ]
 
-    round3 = [
+    assert Conflict.resolve_conflicts(conflicts, pairings, rankings) ==
+             [
+               {"Trinity A", "Shasta"},
+               {"King", "Trinity B"},
+               {"Tam", "Redlands"},
+               {"Carmel", "Menlo"}
+             ]
+  end
+
+  test "step 5 conflict resolution: move upper-ranked team down 2" do
+    conflicts = [{"Trinity A", "Trinity B"}]
+    conflicts = [{"King", "Trinity A"} | conflicts]
+    conflicts = [{"Menlo", "Trinity B"} | conflicts]
+
+    pairings = [
       {"Trinity A", "Trinity B"},
       {"Menlo", "King"},
       {"Tam", "Shasta"},
@@ -99,16 +90,47 @@ defmodule ConflictTest do
       "Redlands"
     ]
 
-    assert Conflict.resolve_conflicts(tournament, rankings, round3) == [
-             {"Trinity A", "Shasta"},
-             {"Menlo", "King"},
-             {"Tam", "Trinity B"},
-             {"Redlands", "Carmel"}
-           ]
+    assert Conflict.resolve_conflicts(conflicts, pairings, rankings) ==
+             [
+               {"Trinity A", "Shasta"},
+               {"Menlo", "King"},
+               {"Tam", "Trinity B"},
+               {"Redlands", "Carmel"}
+             ]
+  end
 
-    assert Conflict.conflict?(tournament, {trinity_b, trinity_a}) == true
-    assert Conflict.conflict?(tournament, {trinity_a, king}) == true
-    assert Conflict.conflict?(tournament, {trinity_b, menlo}) == true
-    assert Conflict.conflict?(tournament, {carmel, tam}) == false
+  test "multiple conflicts" do
+    conflicts = [
+      {"Trinity A", "King"},
+      {"Redlands", "Trinity B"},
+      {"Trinity A", "Trinity B"},
+      {"Carmel", "Menlo"},
+      {"Tam", "Shasta"}
+    ]
+
+    pairings = [
+      {"Trinity A", "King"},
+      {"Redlands", "Trinity B"},
+      {"Menlo", "Carmel"},
+      {"Tam", "Shasta"}
+    ]
+
+    rankings = [
+      "Trinity A",
+      "Trinity B",
+      "King",
+      "Menlo",
+      "Tam",
+      "Shasta",
+      "Carmel",
+      "Redlands"
+    ]
+
+    assert Conflict.resolve_conflicts(conflicts, pairings, rankings) == [
+             {"Trinity A", "Carmel"},
+             {"Menlo", "Trinity B"},
+             {"Tam", "King"},
+             {"Redlands", "Shasta"}
+           ]
   end
 end
