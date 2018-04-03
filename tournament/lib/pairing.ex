@@ -7,4 +7,10 @@ defmodule Pairing do
 
   def new(%__MODULE__{} = pairing), do: pairing
   def new(opts), do: struct(__MODULE__, opts)
+
+  def display(pairings) when is_list(pairings) do
+    Enum.map(pairings, &display/1)
+  end
+
+  def display(pairing), do: "{#{pairing.defense.name}}"
 end

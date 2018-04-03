@@ -51,7 +51,8 @@ defmodule Ranking.Team.Impl do
   end
 
   defp pairing_totals(ballots, {team1, team2}, fun) do
-    {ballot_total(ballots, [{fun, team1}]), ballot_total(ballots, [{fun, team2}])}
+    {ballot_total(ballots, [{fun, team1}]),
+     ballot_total(ballots, [{fun, team2}])}
   end
 
   defp ballot_total(ballots, opts), do: BallotList.total(ballots, opts)
@@ -63,10 +64,11 @@ defmodule Ranking.Team.Impl do
     )
   end
 
-  defp do_sort_with_tiebreakers(pairing, ballots, [head | tail]) do
+  defp do_sort_with_tiebreakers({team1, _} = pairing, ballots, [head | tail]) do
     {total1, total2} = pairing_totals(ballots, pairing, head)
 
     cond do
+      team1.name == "Bye Buster" -> false
       total1 > total2 -> true
       total1 < total2 -> false
       true -> do_sort_with_tiebreakers(pairing, ballots, tail)

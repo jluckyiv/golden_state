@@ -224,5 +224,6 @@ defmodule Rank.Impl do
     end
   end
 
-  defp final_ranking(ballots, team), do: Ranking.Team.final_ranking(ballots, team)
+  defp final_ranking(ballots, team),
+    do: Ranking.Team.final_ranking(ballots, team)
 end

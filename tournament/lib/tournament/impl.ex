@@ -7,7 +7,7 @@ defmodule Tournament.Impl do
   end
 
   def add_ballots(tournament, ballots) do
-    %{tournament | ballots: Enum.concat(ballots, tournament.ballots)}
+    %{tournament | ballots: ballots ++ tournament.ballots}
   end
 
   def add_conflict(tournament, conflict) do
@@ -63,7 +63,7 @@ defmodule Tournament.Impl do
     |> Enum.map(&List.to_tuple/1)
   end
 
-  def resolve_conflicts(pairings, tournament, round_number) do
+  def resolve_conflicts(pairings, tournament, round_number: round_number) do
     conflicts =
       (tournament.conflicts ++ tournament.pairings)
       |> Enum.map(&{&1.prosecution, &1.defense})
@@ -76,25 +76,25 @@ defmodule Tournament.Impl do
   def seed(tournament, round_number: 1) do
     tournament
     |> seed_round1()
-    |> resolve_conflicts(tournament, 1)
+    |> resolve_conflicts(tournament, round_number: 1)
   end
 
   def seed(tournament, round_number: 2) do
     tournament
     |> seed_round2()
-    |> resolve_conflicts(tournament, 2)
+    |> resolve_conflicts(tournament, round_number: 2)
   end
 
-  def seed(tournament, round_number: 3) do
+  def seed(tournament, round_number: 3, coin_flip: coin_flip) do
     tournament
-    |> seed_round3()
-    |> resolve_conflicts(tournament, 3)
+    |> seed_round3(coin_flip: coin_flip)
+    |> resolve_conflicts(tournament, round_number: 3)
   end
 
   def seed(tournament, round_number: 4) do
     tournament
     |> seed_round4()
-    |> resolve_conflicts(tournament, 4)
+    |> resolve_conflicts(tournament, round_number: 4)
   end
 
   def ranked_teams(tournament, round_number: 4) do
@@ -131,16 +131,14 @@ defmodule Tournament.Impl do
       ballots_won: BallotList.total(tournament.ballots, ballots_won: team),
       point_differential:
         BallotList.total(tournament.ballots, point_differential: team),
+      combined_strength:
+        BallotList.total(tournament.ballots, combined_strength: team),
       distance_traveled: team.distance_traveled
     }
   end
 
   def with_rankings(rankings) do
     Enum.with_index(rankings, 1)
-  end
-
-  defp coin_flip() do
-    Enum.random([:prosecution, :defense])
   end
 
   defp do_pairings(pairings, []), do: pairings
@@ -151,7 +149,7 @@ defmodule Tournament.Impl do
     |> do_pairings(tail)
   end
 
-  defp seed_round1(tournament, requests \\ []) do
+  defp seed_round1(tournament) do
     tournament.teams
     |> Enum.shuffle()
     |> Enum.chunk_every(2)
@@ -162,23 +160,25 @@ defmodule Tournament.Impl do
     seed_even_round(tournament, round_number: 2)
   end
 
-  defp seed_round3(tournament) do
+  defp seed_round3(tournament, coin_flip: coin_flip) do
     tournament
     |> team_rankings(round_number: 2)
-    |> do_seed_round3(coin_flip())
+    |> do_seed_round3(coin_flip)
   end
 
   defp seed_round4(tournament) do
     seed_even_round(tournament, round_number: 4)
   end
 
-  defp do_seed_round3(rankings, :prosecution) do
+  defp do_seed_round3(rankings, coin_flip)
+       when coin_flip in [:heads, :prosecution] do
     rankings
     |> do_seed_round3(:defense)
     |> Enum.map(&reverse_pairing/1)
   end
 
-  defp do_seed_round3(rankings, :defense) do
+  defp do_seed_round3(rankings, coin_flip)
+       when coin_flip in [:tails, :defense] do
     rankings
     |> Enum.chunk_every(2)
     |> Enum.map(&List.to_tuple/1)

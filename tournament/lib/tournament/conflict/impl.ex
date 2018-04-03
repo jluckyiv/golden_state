@@ -33,7 +33,6 @@ defmodule Tournament.Conflict.Impl do
         up: 4
       )
     else
-      IO.puts("Conflicts resolved.")
       pairings
     end
   end
@@ -48,18 +47,26 @@ defmodule Tournament.Conflict.Impl do
 
     cond do
       resolved_pairings == pairings ->
+        IO.puts("Conflict remains.")
         do_resolve_conflicts(conflicts, rankings, pairings, conflict, rest)
 
       conflicts?(conflicts, new_pairings(pairings, resolved_pairings)) ->
+        IO.puts("Conflict remains.")
         do_resolve_conflicts(conflicts, rankings, pairings, conflict, rest)
 
       true ->
+        IO.puts("Conflict resolved.")
         resolve_conflicts(conflicts, resolved_pairings, rankings)
     end
   end
 
-  defp do_resolve_conflicts(_conflicts, _rankings, pairings, _pairing, []) do
-    pairings
+  defp do_resolve_conflicts(conflicts, rankings, pairings, pairing, []) do
+    IO.inspect(conflicts, label: "Conflicts", width: 120)
+    IO.inspect(rankings, label: "Rankings", width: 120)
+    IO.inspect(pairings, label: "Pairings", width: 120)
+    IO.inspect(pairing, label: "Pairing", width: 120)
+
+    raise "Could not resolve pairings"
   end
 
   defp new_pairings(pairings, resolved_pairings) do

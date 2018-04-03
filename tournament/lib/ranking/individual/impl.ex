@@ -15,6 +15,7 @@ defmodule Ranking.Individual.Impl do
     ballots
     |> Rank.from_ballots()
     |> Rank.filter(List.wrap(opts))
+    |> Enum.reject(fn %{team: team} -> team.name == "Bye Buster" end)
     |> Rank.totals()
     |> sort_with_tiebreakers(ballots, :final_ranking)
   end
@@ -71,5 +72,6 @@ defmodule Ranking.Individual.Impl do
     end
   end
 
-  defp final_ranking(ballots, team), do: Ranking.Team.final_ranking(ballots, team)
+  defp final_ranking(ballots, team),
+    do: Ranking.Team.final_ranking(ballots, team)
 end
