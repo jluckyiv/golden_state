@@ -20,38 +20,6 @@ defmodule Ranking.Individual.Impl do
     |> sort_with_tiebreakers(ballots, :final_ranking)
   end
 
-  defp do_filter(ranks, {:ranks, value}) do
-    do_filter(ranks, {:position, value})
-  end
-
-  defp do_filter(ranks, :attorney_ranks) do
-    do_filter(ranks, {:position, :attorney})
-  end
-
-  defp do_filter(ranks, :bailiff_ranks) do
-    do_filter(ranks, {:position, :bailiff})
-  end
-
-  defp do_filter(ranks, :clerk_ranks) do
-    do_filter(ranks, {:position, :clerk})
-  end
-
-  defp do_filter(ranks, :motion_ranks) do
-    do_filter(ranks, {:position, :motion})
-  end
-
-  defp do_filter(ranks, :witness_ranks) do
-    do_filter(ranks, {:position, :witness})
-  end
-
-  defp do_filter(ranks, {:match, %Rank.Impl{} = rank}) do
-    do_filter(ranks, {:identity, identity(rank)})
-  end
-
-  defp do_filter(ranks, {property, value}) do
-    Enum.filter(ranks, &(get(&1, property) == value))
-  end
-
   defp sort_with_tiebreakers(elements, tiebreaker_data, tiebreakers) do
     Enum.sort(
       elements,
