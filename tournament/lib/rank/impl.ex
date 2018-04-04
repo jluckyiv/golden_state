@@ -16,8 +16,6 @@ defmodule Rank.Impl do
 
   def filter(ranks, []), do: ranks
 
-  def format(rank, opts), do: do_format({}, rank, opts)
-
   def from_ballot(ballot) do
     Enum.concat([
       attorney_ranks(ballot),
@@ -163,14 +161,6 @@ defmodule Rank.Impl do
 
   defp append_score_to_rank({rank, index}) do
     Tuple.append(rank, 5 - index)
-  end
-
-  defp do_format(tuple, _rank, []), do: tuple
-
-  defp do_format(tuple, rank, [head | tail]) do
-    tuple
-    |> Tuple.append(get(rank, head))
-    |> do_format(rank, tail)
   end
 
   defp do_filter(ranks, {:ranks, value}) do

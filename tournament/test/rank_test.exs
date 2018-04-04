@@ -30,11 +30,12 @@ defmodule RankTest do
         team: "Team"
       )
 
-    assert Rank.format(rank, [:name, :position, :score]) == {
-             "Name",
-             :attorney,
-             5
-           }
+    assert Formatter.display_as_tuple(Rank, rank, [:name, :position, :score]) ==
+             {
+               "Name",
+               :attorney,
+               5
+             }
   end
 
   test "motion attorney properties" do
@@ -170,7 +171,10 @@ defmodule RankTest do
     totals = Rank.totals(ranks)
     assert Enum.count(totals) == 2
 
-    assert Enum.map(totals, &Rank.format(&1, [:name, :score])) == [
+    assert Enum.map(
+             totals,
+             &Formatter.display_as_tuple(Rank, &1, [:name, :score])
+           ) == [
              {"Competitor 2", 2.25},
              {"Competitor 1", 1.25}
            ]
@@ -205,7 +209,10 @@ defmodule RankTest do
 
     ranks = Rank.from_ballot(ballot)
 
-    assert Enum.map(ranks, &Rank.format(&1, [:name, :score])) == [
+    assert Enum.map(
+             ranks,
+             &Formatter.display_as_tuple(Rank, &1, [:name, :score])
+           ) == [
              {"Prosecution Attorney 1", 5},
              {"Defense Attorney 2", 4},
              {"Prosecution Attorney 3", 3},
