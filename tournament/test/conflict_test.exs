@@ -40,11 +40,11 @@ defmodule ConflictTest do
     assert Conflict.resolve_conflicts(conflicts, pairings, rankings) ==
              {:ok,
               [
-                {%{name: "King"}, %{name: "Shasta"}},
-                {%{name: "Trinity A"}, %{name: "Redlands"}},
-                {%{name: "Tam"}, %{name: "Trinity B"}},
-                {%{name: "Carmel"}, %{name: "Menlo"}}
-              ], [{{%{name: "Trinity A"}, %{name: "Trinity B"}}, :down, 1}]}
+                {king, shasta},
+                {trinity_a, redlands},
+                {tam, trinity_b},
+                {carmel, menlo}
+              ], [{{trinity_a, trinity_b}, :down, 1}]}
   end
 
   test "step 3 conflict resolution: move upper-ranked team up 1" do
@@ -79,14 +79,14 @@ defmodule ConflictTest do
     assert Conflict.resolve_conflicts(conflicts, pairings, rankings) ==
              {:ok,
               [
-                {%{name: "Trinity A"}, %{name: "Shasta"}},
-                {%{name: "King"}, %{name: "Trinity B"}},
-                {%{name: "Tam"}, %{name: "Redlands"}},
-                {%{name: "Carmel"}, %{name: "Menlo"}}
+                {trinity_a, shasta},
+                {king, trinity_b},
+                {tam, redlands},
+                {carmel, menlo}
               ],
               [
-                {{%{name: "Trinity A"}, %{name: "Trinity B"}}, :down, 1},
-                {{%{name: "Trinity A"}, %{name: "Trinity B"}}, :up, 1}
+                {{trinity_a, trinity_b}, :down, 1},
+                {{trinity_a, trinity_b}, :up, 1}
               ]}
   end
 
@@ -124,15 +124,15 @@ defmodule ConflictTest do
     assert Conflict.resolve_conflicts(conflicts, pairings, rankings) ==
              {:ok,
               [
-                {%{name: "Trinity A"}, %{name: "Shasta"}},
-                {%{name: "Menlo"}, %{name: "King"}},
-                {%{name: "Tam"}, %{name: "Trinity B"}},
-                {%{name: "Redlands"}, %{name: "Carmel"}}
+                {trinity_a, shasta},
+                {menlo, king},
+                {tam, trinity_b},
+                {redlands, carmel}
               ],
               [
-                {{%{name: "Trinity A"}, %{name: "Trinity B"}}, :down, 1},
-                {{%{name: "Trinity A"}, %{name: "Trinity B"}}, :up, 1},
-                {{%{name: "Trinity A"}, %{name: "Trinity B"}}, :down, 2}
+                {{trinity_a, trinity_b}, :down, 1},
+                {{trinity_a, trinity_b}, :up, 1},
+                {{trinity_a, trinity_b}, :down, 2}
               ]}
   end
 
@@ -202,18 +202,18 @@ defmodule ConflictTest do
     assert Conflict.resolve_conflicts(conflicts, pairings, rankings) ==
              {:ok,
               [
-                {%{name: "Trinity A"}, %{name: "Carmel"}},
-                {%{name: "Menlo"}, %{name: "Trinity B"}},
-                {%{name: "Tam"}, %{name: "King"}},
-                {%{name: "Redlands"}, %{name: "Shasta"}}
+                {trinity_a, carmel},
+                {menlo, trinity_b},
+                {tam, king},
+                {redlands, shasta}
               ],
               [
-                {{%{name: "Trinity A"}, %{name: "King"}}, :down, 1},
-                {{%{name: "Trinity A"}, %{name: "King"}}, :up, 1},
-                {{%{name: "Trinity A"}, %{name: "King"}}, :down, 2},
-                {{%{name: "Redlands"}, %{name: "Trinity B"}}, :down, 1},
-                {{%{name: "Tam"}, %{name: "Shasta"}}, :down, 1},
-                {{%{name: "Tam"}, %{name: "Shasta"}}, :up, 1}
+                {{trinity_a, king}, :down, 1},
+                {{trinity_a, king}, :up, 1},
+                {{trinity_a, king}, :down, 2},
+                {{redlands, trinity_b}, :down, 1},
+                {{tam, shasta}, :down, 1},
+                {{tam, shasta}, :up, 1}
               ]}
   end
 
