@@ -9,5 +9,7 @@ defmodule Rank do
   defdelegate get(rank, property), to: Impl
   defdelegate new(opts), to: Impl
   defdelegate match?(rank1, rank2), to: Impl
+  defdelegate rankings(ranks), to: Impl
+  defdelegate rankings(ranks, opts), to: Impl
   defdelegate totals(ranks), to: Impl
 end

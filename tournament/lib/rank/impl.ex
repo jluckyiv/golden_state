@@ -1,14 +1,20 @@
 defmodule Rank.Impl do
-  defstruct name: nil, position: nil, score: 0, side: nil, team: nil
+  defstruct name: nil,
+            position: nil,
+            score: 0,
+            side: nil,
+            team: nil,
+            round_number: 0
 
   def find(ranks, opts), do: List.first(filter(ranks, opts))
-  def filter(ranks, []), do: ranks
 
   def filter(ranks, [head | tail]) do
     ranks
     |> do_filter(head)
     |> filter(tail)
   end
+
+  def filter(ranks, []), do: ranks
 
   def format(rank, opts), do: do_format({}, rank, opts)
 
@@ -31,11 +37,19 @@ defmodule Rank.Impl do
   end
 
   def get(rank, property), do: apply(__MODULE__, property, [rank])
-  def identity(rank), do: map_without_score(rank)
+
+  def identity(rank) do
+    rank
+    |> Map.from_struct()
+    |> Map.delete(:score)
+    |> Map.delete(:round_number)
+  end
+
   def match?(rank1, rank2), do: identity(rank1) == identity(rank2)
   def name(rank), do: rank.name
   def new(opts), do: struct(__MODULE__, opts)
   def position(rank), do: rank.position
+  def round_number(rank), do: rank.round_number
   def score(rank), do: rank.score
   def side(rank), do: rank.side
 
@@ -76,7 +90,8 @@ defmodule Rank.Impl do
         position: :attorney,
         score: score,
         side: side,
-        team: Ballot.get(ballot, side)
+        team: Ballot.get(ballot, side),
+        round_number: ballot.round_number
       )
     end)
   end
@@ -92,7 +107,8 @@ defmodule Rank.Impl do
         position: :witness,
         score: score,
         side: side,
-        team: Ballot.get(ballot, side)
+        team: Ballot.get(ballot, side),
+        round_number: ballot.round_number
       )
     end)
   end
@@ -112,7 +128,8 @@ defmodule Rank.Impl do
       position: :motion,
       score: Ballot.get(ballot, motion_differential: side),
       side: side,
-      team: Ballot.get(ballot, side)
+      team: Ballot.get(ballot, side),
+      round_number: ballot.round_number
     )
   end
 
@@ -125,7 +142,8 @@ defmodule Rank.Impl do
       position: :bailiff,
       score: score,
       side: :defense,
-      team: Ballot.get(ballot, :defense)
+      team: Ballot.get(ballot, :defense),
+      round_number: ballot.round_number
     )
   end
 
@@ -138,7 +156,8 @@ defmodule Rank.Impl do
       position: :clerk,
       score: score,
       side: :prosecution,
-      team: Ballot.get(ballot, :prosecution)
+      team: Ballot.get(ballot, :prosecution),
+      round_number: ballot.round_number
     )
   end
 
@@ -186,17 +205,37 @@ defmodule Rank.Impl do
     Enum.filter(ranks, &(get(&1, property) == value))
   end
 
-  defp map_score({identity, score}), do: Map.put(identity, :score, score)
+  defp map_score({identity, {score, ballots}}) do
+    Map.put(identity, :score, score / ballots)
+  end
 
-  defp map_without_score(rank) do
-    rank
-    |> Map.from_struct()
-    |> Map.delete(:score)
+  defp map_score(
+         {identity = %{position: position},
+          {_round_numbers, total_score, _ballot_count}}
+       )
+       when position in [:attorney, :witness] do
+    Map.put(identity, :score, total_score / 4)
+  end
+
+  defp map_score({identity, {round_numbers, total_score, ballot_count}}) do
+    if MapSet.size(round_numbers) < 2 do
+      Map.put(identity, :score, :ineligible)
+    else
+      Map.put(identity, :score, total_score / ballot_count)
+    end
   end
 
   defp reduce_ranks_to_map(ranks) do
     Enum.reduce(ranks, %{}, fn rank, acc ->
-      Map.update(acc, identity(rank), rank.score, &(&1 + rank.score))
+      Map.update(
+        acc,
+        identity(rank),
+        {MapSet.new([rank.round_number]), rank.score, 1},
+        fn {round_numbers, score, ballots} ->
+          {MapSet.put(round_numbers, rank.round_number), score + rank.score,
+           ballots + 1}
+        end
+      )
     end)
   end
 

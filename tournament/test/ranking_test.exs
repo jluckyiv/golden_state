@@ -64,26 +64,26 @@ defmodule RankingTest do
     attorney_ranks = Ranking.Individual.rankings(ballots, :attorney_ranks)
 
     assert Enum.map(attorney_ranks, &{&1.team.name, &1.name, &1.score}) == [
-             {"Team 2", "Attorney 12", 9},
-             {"Team 1", "Attorney 11", 9},
-             {"Team 1", "Attorney 13", 6},
-             {"Team 2", "Attorney 14", 4}
+             {"Team 2", "Attorney 12", 2.25},
+             {"Team 1", "Attorney 11", 2.25},
+             {"Team 1", "Attorney 13", 1.5},
+             {"Team 2", "Attorney 14", 1.0}
            ]
 
     witness_ranks = Ranking.Individual.rankings(ballots, position: :witness)
 
     assert Enum.map(witness_ranks, &{&1.team.name, &1.name, &1.score}) == [
-             {"Team 1", "Witness 11", 10},
-             {"Team 2", "Witness 14", 7},
-             {"Team 1", "Witness 13", 7},
-             {"Team 2", "Witness 12", 4}
+             {"Team 1", "Witness 11", 2.5},
+             {"Team 2", "Witness 14", 1.75},
+             {"Team 1", "Witness 13", 1.75},
+             {"Team 2", "Witness 12", 1.0}
            ]
 
     motion_ranks = Ranking.Individual.rankings(ballots, ranks: :motion)
 
     assert Enum.map(motion_ranks, &{&1.team.name, &1.name, &1.score}) == [
-             {"Team 1", "D Motion", 2},
-             {"Team 2", "P Motion", -2}
+             {"Team 2", "P Motion", :ineligible},
+             {"Team 1", "D Motion", :ineligible}
            ]
   end
 
@@ -148,21 +148,21 @@ defmodule RankingTest do
     attorney_ranks = Ranking.Individual.rankings(ballots, :attorney_ranks)
 
     assert Enum.map(attorney_ranks, &{&1.team.name, &1.name, &1.score}) == [
-             {"Team 1", "Attorney 11", 9},
-             {"Team 1", "Attorney 13", 6}
+             {"Team 1", "Attorney 11", 2.25},
+             {"Team 1", "Attorney 13", 1.5}
            ]
 
     witness_ranks = Ranking.Individual.rankings(ballots, position: :witness)
 
     assert Enum.map(witness_ranks, &{&1.team.name, &1.name, &1.score}) == [
-             {"Team 1", "Witness 11", 10},
-             {"Team 1", "Witness 13", 7}
+             {"Team 1", "Witness 11", 2.5},
+             {"Team 1", "Witness 13", 1.75}
            ]
 
     motion_ranks = Ranking.Individual.rankings(ballots, ranks: :motion)
 
     assert Enum.map(motion_ranks, &{&1.team.name, &1.name, &1.score}) == [
-             {"Team 1", "D Motion", 2}
+             {"Team 1", "D Motion", :ineligible}
            ]
   end
 end

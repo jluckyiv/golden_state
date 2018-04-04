@@ -47,25 +47,20 @@ defmodule Tournament.Conflict.Impl do
 
     cond do
       resolved_pairings == pairings ->
-        IO.puts("Conflict remains.")
+        # IO.puts("Conflict remains.")
         do_resolve_conflicts(conflicts, rankings, pairings, conflict, rest)
 
       conflicts?(conflicts, new_pairings(pairings, resolved_pairings)) ->
-        IO.puts("Conflict remains.")
+        # IO.puts("Conflict remains.")
         do_resolve_conflicts(conflicts, rankings, pairings, conflict, rest)
 
       true ->
-        IO.puts("Conflict resolved.")
+        # IO.puts("Conflict resolved.")
         resolve_conflicts(conflicts, resolved_pairings, rankings)
     end
   end
 
-  defp do_resolve_conflicts(conflicts, rankings, pairings, pairing, []) do
-    IO.inspect(conflicts, label: "Conflicts", width: 120)
-    IO.inspect(rankings, label: "Rankings", width: 120)
-    IO.inspect(pairings, label: "Pairings", width: 120)
-    IO.inspect(pairing, label: "Pairing", width: 120)
-
+  defp do_resolve_conflicts(_conflicts, _rankings, _pairings, _pairing, []) do
     raise "Could not resolve pairings"
   end
 
@@ -86,10 +81,10 @@ defmodule Tournament.Conflict.Impl do
     sub_index = index - distance
 
     if sub_index < 0 do
-      IO.puts("Cannot move #{team.name} up #{distance}.")
+      # IO.puts("Cannot move #{team.name} up #{distance}.")
       teams
     else
-      IO.puts("Moving #{team.name} up #{distance}.")
+      # IO.puts("Moving #{team.name} up #{distance}.")
 
       teams
       |> List.delete_at(index)
@@ -104,10 +99,10 @@ defmodule Tournament.Conflict.Impl do
     sub_index = index + distance
 
     if sub_index >= length(teams) do
-      IO.puts("Cannot move #{team.name} down #{distance}.")
+      # IO.puts("Cannot move #{team.name} down #{distance}.")
       teams
     else
-      IO.puts("Moving #{team.name} down #{distance}.")
+      # IO.puts("Moving #{team.name} down #{distance}.")
 
       teams
       |> List.pop_at(sub_index)

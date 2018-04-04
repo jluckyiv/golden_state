@@ -8,7 +8,8 @@ defmodule RankTest do
         position: :attorney,
         score: 5,
         side: :prosecution,
-        team: "Team"
+        team: "Team",
+        round_number: 1
       )
 
     assert Rank.get(rank, :name) == "Name"
@@ -16,6 +17,7 @@ defmodule RankTest do
     assert Rank.get(rank, :score) == 5
     assert Rank.get(rank, :side) == :prosecution
     assert Rank.get(rank, :team) == "Team"
+    assert Rank.get(rank, :round_number) == 1
   end
 
   test "format rank" do
@@ -139,7 +141,8 @@ defmodule RankTest do
         position: :witness,
         score: 5,
         side: :prosecution,
-        team: "Team"
+        team: "Team",
+        round: 1
       )
 
     rank2b =
@@ -148,7 +151,8 @@ defmodule RankTest do
         position: :witness,
         score: 4,
         side: :prosecution,
-        team: "Team"
+        team: "Team",
+        round: 1
       )
 
     rank1 =
@@ -157,7 +161,8 @@ defmodule RankTest do
         position: :witness,
         score: 5,
         side: :defense,
-        team: "Team"
+        team: "Team",
+        round: 1
       )
 
     ranks = [rank2a, rank2b, rank1]
@@ -166,16 +171,16 @@ defmodule RankTest do
     assert Enum.count(totals) == 2
 
     assert Enum.map(totals, &Rank.format(&1, [:name, :score])) == [
-             {"Competitor 2", 9},
-             {"Competitor 1", 5}
+             {"Competitor 2", 2.25},
+             {"Competitor 1", 1.25}
            ]
   end
 
   test "ranks from ballot" do
     ballot =
       Ballot.new(
-        prosecution: "Prosecution",
-        defense: "Defense",
+        prosecution: %{name: "Prosecution"},
+        defense: %{name: "Defense"},
         attorney_ranks: [
           prosecution: "Prosecution Attorney 1",
           defense: "Defense Attorney 2",
@@ -219,8 +224,9 @@ defmodule RankTest do
   test "ranks from mulitple ballots" do
     ballot1 =
       Ballot.new(
-        prosecution: "Prosecution",
-        defense: "Defense",
+        round_number: 1,
+        prosecution: %{name: "Prosecution"},
+        defense: %{name: "Defense"},
         attorney_ranks: [
           prosecution: "Prosecution Attorney 1",
           defense: "Defense Attorney 2",
@@ -245,8 +251,9 @@ defmodule RankTest do
 
     ballot2 =
       Ballot.new(
-        prosecution: "Prosecution",
-        defense: "Defense",
+        round_number: 1,
+        prosecution: %{name: "Prosecution"},
+        defense: %{name: "Defense"},
         attorney_ranks: [
           prosecution: "Prosecution Attorney 3",
           defense: "Defense Attorney 4",
@@ -269,14 +276,84 @@ defmodule RankTest do
         ]
       )
 
-    ranks = Rank.from_ballots([ballot1, ballot2])
-    assert Enum.count(ranks) == 24
+    ballot3 =
+      Ballot.new(
+        round_number: 3,
+        prosecution: %{name: "Prosecution"},
+        defense: %{name: "Defense"},
+        attorney_ranks: [
+          prosecution: "Prosecution Attorney 3",
+          defense: "Defense Attorney 4",
+          prosecution: "Prosecution Attorney 5",
+          defense: "Defense Attorney 6"
+        ],
+        bailiff: "Student Bailiff Alt",
+        bailiff_score: 9,
+        clerk: "Student Clerk",
+        clerk_score: 9,
+        defense_motion_attorney: "Defense Motion Attorney",
+        defense_motion_score: 9,
+        prosecution_motion_attorney: "Prosecution Motion Attorney Alt",
+        prosecution_motion_score: 8,
+        witness_ranks: [
+          prosecution: "Student Witness 3",
+          defense: "Student Witness 4",
+          prosecution: "Student Witness 5",
+          defense: "Student Witness 6"
+        ]
+      )
+
+    ballot4 =
+      Ballot.new(
+        round_number: 3,
+        prosecution: %{name: "Prosecution"},
+        defense: %{name: "Defense"},
+        attorney_ranks: [
+          prosecution: "Prosecution Attorney 3",
+          defense: "Defense Attorney 4",
+          prosecution: "Prosecution Attorney 5",
+          defense: "Defense Attorney 6"
+        ],
+        bailiff: "Student Bailiff Alt",
+        bailiff_score: 9,
+        clerk: "Student Clerk",
+        clerk_score: 9,
+        defense_motion_attorney: "Defense Motion Attorney",
+        defense_motion_score: 9,
+        prosecution_motion_attorney: "Prosecution Motion Attorney Alt",
+        prosecution_motion_score: 8,
+        witness_ranks: [
+          prosecution: "Student Witness 3",
+          defense: "Student Witness 4",
+          prosecution: "Student Witness 5",
+          defense: "Student Witness 6"
+        ]
+      )
+
+    ballots = [ballot1, ballot2, ballot3, ballot4]
+    ranks = Rank.from_ballots(ballots)
+    assert Enum.count(ranks) == 48
+
     totals = Rank.totals(ranks)
-    assert Enum.count(totals) == 16
-    assert Rank.find(totals, name: "Student Bailiff").score == 19
-    assert Rank.find(totals, name: "Student Clerk").score == 17
-    assert Rank.find(totals, name: "Prosecution Attorney 3").score == 8
-    assert Rank.find(totals, name: "Prosecution Motion Attorney").score == -2
-    assert Rank.find(totals, name: "Student Witness 4").score == 6
+    assert Enum.count(totals) == 18
+
+    rankings = Rank.rankings(ballots)
+
+    assert Rank.find(totals, name: "Student Clerk").score == 8.75
+    assert Rank.find(totals, name: "Defense Motion Attorney").score == 1
+    assert Rank.find(totals, name: "Prosecution Attorney 3").score == 4.5
+    assert Rank.find(totals, name: "Student Witness 4").score == 3.5
+
+    assert Enum.find(rankings, &(&1.name == "Student Bailiff")).score ==
+             :ineligible
+
+    assert Enum.find(rankings, &(&1.name == "Student Bailiff Alt")).score ==
+             :ineligible
+
+    assert Rank.find(totals, name: "Prosecution Motion Attorney").score ==
+             :ineligible
+
+    assert Rank.find(totals, name: "Prosecution Motion Attorney Alt").score ==
+             :ineligible
   end
 end

@@ -249,9 +249,20 @@ defmodule BallotListTest do
 
   test "opponents", context do
     ballots = context[:ballots]
-    assert BallotList.filter(ballots, opponents: "Team 1") == ["Team 2", "Team 3", "Team 4"]
+
+    assert BallotList.filter(ballots, opponents: "Team 1") == [
+             "Team 2",
+             "Team 3",
+             "Team 4"
+           ]
+
     assert BallotList.filter(ballots, opponents: "Team 2") == ["Team 1"]
-    assert BallotList.filter(ballots, opponents: "Team 3") == ["Team 1", "Team 5"]
+
+    assert BallotList.filter(ballots, opponents: "Team 3") == [
+             "Team 1",
+             "Team 5"
+           ]
+
     assert BallotList.filter(ballots, opponents: "Team 4") == ["Team 1"]
     assert BallotList.filter(ballots, opponents: "Team 5") == ["Team 3"]
   end
@@ -269,16 +280,12 @@ defmodule BallotListTest do
     ballots = context[:ballots]
     ranks = BallotList.total(ballots, :attorney_ranks)
     assert Enum.count(ranks) == 4
-    assert Rank.find(ranks, name: "Attorney 12").score == 9
-    assert Rank.find(ranks, name: "Attorney 13").score == 8
   end
 
   test "witness ranks", context do
     ballots = context[:ballots]
     ranks = BallotList.total(ballots, :witness_ranks)
     assert Enum.count(ranks) == 4
-    assert Rank.find(ranks, name: "Witness 11").score == 10
-    assert Rank.find(ranks, name: "Witness 12").score == 6
   end
 
   test "filter", context do
@@ -289,17 +296,28 @@ defmodule BallotListTest do
     team1_round4 = BallotList.filter(ballots, team: "Team 1", round_number: 4)
     assert Enum.empty?(team1_round4)
 
-    team1_up_to_round2 = BallotList.filter(ballots, team: "Team 1", up_to_round: 2)
+    team1_up_to_round2 =
+      BallotList.filter(ballots, team: "Team 1", up_to_round: 2)
+
     assert Enum.count(team1_up_to_round2) == 4
 
-    team1_up_to_round3 = BallotList.filter(ballots, team: "Team 1", up_to_round: 3)
+    team1_up_to_round3 =
+      BallotList.filter(ballots, team: "Team 1", up_to_round: 3)
+
     assert Enum.count(team1_up_to_round3) == 6
 
-    team1_up_to_round4 = BallotList.filter(ballots, team: "Team 1", up_to_round: 4)
+    team1_up_to_round4 =
+      BallotList.filter(ballots, team: "Team 1", up_to_round: 4)
+
     assert Enum.count(team1_up_to_round4) == 6
 
     team2_v_team1_up_to_round4 =
-      BallotList.filter(ballots, defense: "Team 1", prosecution: "Team 2", up_to_round: 4)
+      BallotList.filter(
+        ballots,
+        defense: "Team 1",
+        prosecution: "Team 2",
+        up_to_round: 4
+      )
 
     assert Enum.count(team2_v_team1_up_to_round4) == 2
 
@@ -307,9 +325,25 @@ defmodule BallotListTest do
       BallotList.filter(ballots, team: "Team 1", team: "Team 2", up_to_round: 4)
 
     assert Enum.count(team1_and_team2_up_to_round4) == 2
-    assert BallotList.filter(ballots, round_number: 5, side: :defense) == ["Team 7", "Team 9"]
-    assert BallotList.filter(ballots, side: :defense, round_number: 5) == ["Team 7", "Team 9"]
-    assert BallotList.filter(ballots, round_number: 5, side: :prosecution) == ["Team 8", "Team 6"]
-    assert BallotList.filter(ballots, side: :prosecution, round_number: 5) == ["Team 8", "Team 6"]
+
+    assert BallotList.filter(ballots, round_number: 5, side: :defense) == [
+             "Team 7",
+             "Team 9"
+           ]
+
+    assert BallotList.filter(ballots, side: :defense, round_number: 5) == [
+             "Team 7",
+             "Team 9"
+           ]
+
+    assert BallotList.filter(ballots, round_number: 5, side: :prosecution) == [
+             "Team 8",
+             "Team 6"
+           ]
+
+    assert BallotList.filter(ballots, side: :prosecution, round_number: 5) == [
+             "Team 8",
+             "Team 6"
+           ]
   end
 end
