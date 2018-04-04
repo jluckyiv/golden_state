@@ -17,11 +17,19 @@ defmodule Tournament.Conflict.Impl do
   end
 
   def resolve_conflicts(conflicts, pairings, rankings) do
+    resolve_conflicts(
+      [],
+      conflicts,
+      pairings,
+      rankings
+    )
+  end
+
+  def resolve_conflicts(moves, conflicts, pairings, rankings) do
     if conflict = find_conflict(conflicts, pairings) do
       do_resolve_conflicts(
-        conflicts,
-        rankings,
-        pairings,
+        moves,
+        {conflicts, pairings, rankings},
         conflict,
         down: 1,
         up: 1,
@@ -33,11 +41,20 @@ defmodule Tournament.Conflict.Impl do
         up: 4
       )
     else
-      pairings
+      {:ok, pairings, Enum.reverse(moves)}
     end
   end
 
-  defp do_resolve_conflicts(conflicts, rankings, pairings, conflict, [
+  defp do_resolve_conflicts(
+         _moves,
+         {_conflicts, pairings, _rankings},
+         conflict,
+         []
+       ) do
+    {:error, "Could not resolve conflict", conflict, pairings}
+  end
+
+  defp do_resolve_conflicts(moves, {conflicts, pairings, rankings}, conflict, [
          {direction, distance} | rest
        ]) do
     resolved_pairings =
@@ -45,23 +62,28 @@ defmodule Tournament.Conflict.Impl do
       |> team_to_swap(rankings, direction)
       |> swap_team(pairings, {direction, distance})
 
+    moves = [{conflict, direction, distance} | moves]
+
     cond do
       resolved_pairings == pairings ->
-        # IO.puts("Conflict remains.")
-        do_resolve_conflicts(conflicts, rankings, pairings, conflict, rest)
+        do_resolve_conflicts(
+          moves,
+          {conflicts, pairings, rankings},
+          conflict,
+          rest
+        )
 
       conflicts?(conflicts, new_pairings(pairings, resolved_pairings)) ->
-        # IO.puts("Conflict remains.")
-        do_resolve_conflicts(conflicts, rankings, pairings, conflict, rest)
+        do_resolve_conflicts(
+          moves,
+          {conflicts, pairings, rankings},
+          conflict,
+          rest
+        )
 
       true ->
-        # IO.puts("Conflict resolved.")
-        resolve_conflicts(conflicts, resolved_pairings, rankings)
+        resolve_conflicts(moves, conflicts, resolved_pairings, rankings)
     end
-  end
-
-  defp do_resolve_conflicts(_conflicts, _rankings, _pairings, _pairing, []) do
-    raise "Could not resolve pairings"
   end
 
   defp new_pairings(pairings, resolved_pairings) do
@@ -81,11 +103,8 @@ defmodule Tournament.Conflict.Impl do
     sub_index = index - distance
 
     if sub_index < 0 do
-      # IO.puts("Cannot move #{team.name} up #{distance}.")
       teams
     else
-      # IO.puts("Moving #{team.name} up #{distance}.")
-
       teams
       |> List.delete_at(index)
       |> List.pop_at(sub_index)
@@ -99,11 +118,8 @@ defmodule Tournament.Conflict.Impl do
     sub_index = index + distance
 
     if sub_index >= length(teams) do
-      # IO.puts("Cannot move #{team.name} down #{distance}.")
       teams
     else
-      # IO.puts("Moving #{team.name} down #{distance}.")
-
       teams
       |> List.pop_at(sub_index)
       |> (fn {sub, list} -> {sub, List.delete_at(list, index)} end).()

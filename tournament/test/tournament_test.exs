@@ -261,7 +261,7 @@ defmodule TournamentTest do
                 }, 10}
              ]
 
-    round2 = Tournament.seed(tournament, round_number: 2)
+    {:ok, round2, _moves} = Tournament.seed(tournament, round_number: 2)
 
     assert round2 == [
              {trinity_b, venture},
@@ -448,7 +448,8 @@ defmodule TournamentTest do
               }, 10}
            ]
 
-    round3 = Tournament.seed(tournament, round_number: 3, coin_flip: :tails)
+    {:ok, round3, _moves} =
+      Tournament.seed(tournament, round_number: 3, coin_flip: :tails)
 
     assert round3 == [
              {carmel, trinity_b},
@@ -635,7 +636,7 @@ defmodule TournamentTest do
               }, 10}
            ]
 
-    round4 = Tournament.seed(tournament, round_number: 4)
+    {:ok, round4, _moves} = Tournament.seed(tournament, round_number: 4)
 
     assert round4 == [
              {king, venture},
