@@ -33,13 +33,13 @@ defmodule TournamentTest do
   #
   # Individual awards
   # Ranks for wits/attys: 5, 4, 3, 2
-  # Ties go to higher-ranked team
-  # bye buster competitors are not eligible for awards
-
-  # TODO
   # Motions: point differential average per ballot
   # Clerk and bailiff: point average per ballot
-  #
+  # Ties go to higher-ranked team
+  # Bye buster competitors are not eligible for awards
+  # Clerks, bailiffs, and motion attorneys competing in fewer than two rounds are ineligible for individual awards
+
+  # TODO
   # assign presider?
   # assign scorers?
   # assign department?
@@ -806,5 +806,8 @@ defmodule TournamentTest do
              %Team.Impl{distance_traveled: 380, name: "Carmel"},
              %Team.Impl{distance_traveled: 400, name: "Venture"}
            ]
+  end
+
+  test "GSMT 2017 recreation" do
   end
 end
