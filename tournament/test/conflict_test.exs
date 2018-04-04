@@ -256,7 +256,7 @@ defmodule ConflictTest do
       {king_a, king_b},
       {redlands_a, redlands_b},
       {trinity_a, trinity_b},
-      {centennial, bye_buster},
+      {centennial, carmel},
       {centennial, king_b},
       {centennial, moreau},
       {king_a, bye_buster},
@@ -271,7 +271,7 @@ defmodule ConflictTest do
       {trinity_a, bye_buster},
       {trinity_a, king_b},
       {trinity_a, carmel},
-      {venture, carmel},
+      {venture, bye_buster},
       {venture, menlo},
       {venture, tam}
     ]
@@ -289,28 +289,32 @@ defmodule ConflictTest do
     assert Conflict.resolve_conflicts(conflicts, pairings, rankings) ==
              {:ok,
               [
-                {%{name: "King A"}, %{name: "Moreau"}},
-                {%{name: "Redlands A"}, %{name: "Carmel"}},
-                {%{name: "Trinity A"}, %{name: "Menlo"}},
-                {%{name: "Shasta"}, %{name: "Trinity B"}},
-                {%{name: "Redlands B"}, %{name: "King B"}},
-                {%{name: "Centennial"}, %{name: "Tam"}},
-                {%{name: "Venture"}, %{name: "Bye Buster"}}
+                {king_a, moreau},
+                {redlands_a, carmel},
+                {trinity_a, menlo},
+                {shasta, trinity_b},
+                {venture, king_b},
+                {centennial, tam},
+                {redlands_b, bye_buster}
               ],
               [
-                {{%{name: "King A"}, %{name: "King B"}}, :down, 1},
-                {{%{name: "King A"}, %{name: "King B"}}, :up, 1},
-                {{%{name: "King A"}, %{name: "King B"}}, :down, 2},
-                {{%{name: "King A"}, %{name: "King B"}}, :up, 2},
-                {{%{name: "King A"}, %{name: "King B"}}, :down, 3},
-                {{%{name: "King A"}, %{name: "King B"}}, :up, 3},
-                {{%{name: "King A"}, %{name: "King B"}}, :down, 4},
-                {{%{name: "Trinity A"}, %{name: "Trinity B"}}, :down, 1},
-                {{%{name: "Trinity A"}, %{name: "Trinity B"}}, :up, 1},
-                {{%{name: "Shasta"}, %{name: "Tam"}}, :down, 1},
-                {{%{name: "Shasta"}, %{name: "Tam"}}, :up, 1},
-                {{%{name: "Shasta"}, %{name: "Tam"}}, :down, 2},
-                {{%{name: "Shasta"}, %{name: "Tam"}}, :up, 2}
+                {{king_a, king_b}, :down, 1},
+                {{king_a, king_b}, :up, 1},
+                {{king_a, king_b}, :down, 2},
+                {{king_a, king_b}, :up, 2},
+                {{king_a, king_b}, :down, 3},
+                {{king_a, king_b}, :up, 3},
+                {{king_a, king_b}, :down, 4},
+                {{trinity_a, trinity_b}, :down, 1},
+                {{trinity_a, trinity_b}, :up, 1},
+                {{shasta, tam}, :down, 1},
+                {{shasta, tam}, :up, 1},
+                {{shasta, tam}, :down, 2},
+                {{shasta, tam}, :up, 2},
+                {{venture, bye_buster}, :down, 1},
+                {{venture, bye_buster}, :up, 1},
+                {{venture, bye_buster}, :down, 2},
+                {{venture, bye_buster}, :up, 2}
               ]}
   end
 end
